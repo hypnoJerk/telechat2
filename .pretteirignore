@@ -1,0 +1,69 @@
+node_modules
+**/.next/**
+**/_next/**
+**/dist/**
+packages/next/bundles/webpack/packages/*.runtime.js
+packages/next/bundles/webpack/packages/lazy-compilation-*.js
+packages/next/compiled/**
+packages/react-refresh-utils/**/*.js
+packages/react-refresh-utils/**/*.d.ts
+packages/react-dev-overlay/lib/**
+**/__tmp__/**
+lerna.json
+.git
+.github/actions/next-stats-action/.work
+packages/next-swc/crates/**/*
+packages/next-swc/target/**/*
+packages/next-swc/native/**/*
+packages/next-codemod/transforms/__testfixtures__/**/*
+packages/next-codemod/transforms/__tests__/**/*
+packages/next-codemod/**/*.js
+packages/next-codemod/**/*.d.ts
+packages/next-env/**/*.d.ts
+test-timings.json
+test/**/out/**
+bench/nested-deps/pages/**/*
+bench/nested-deps/components/**/*
+pnpm-lock.yaml
+package-lock.json
+package.json
+tsconfig.json
+next-env.d.ts
+.gitignore
+.eslintrc.json
+next.config.js
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
