@@ -50,7 +50,7 @@ const DB = () => {
       // remove all entries from the table that match the chatId
       db.run('DELETE FROM chat WHERE chatId = ?', [chatId])
       db.run(
-        'INSERT INTO chat VALUES (?, ?, ?, ?, ?, ?)',
+        'INSERT INTO chat VALUES (?, ?, ?, ?, ?)',
         [chatId, strjson, promptId, prompt, temperature],
         (err) => {
           if (err) {
