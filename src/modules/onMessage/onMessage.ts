@@ -14,15 +14,13 @@ import { message } from 'telegraf/filters'
 
 const OnMessage = (bot: any) => {
   bot.on(message('text'), async (ctx: any) => {
-    const chatReq: Chat = {
+    const chatReq = {
       chatId: ctx.chat.id,
       message: {
         role: 'user',
         content: ctx.message.text,
       },
-      temperature: 0.5,
       promptId: '1',
-      prompt: 'You are a helpful assistant.',
     }
     const chatReply = await ChatAi(chatReq)
     ctx.reply(chatReply.message.content)

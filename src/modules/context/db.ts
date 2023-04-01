@@ -2,17 +2,19 @@ import sqlite3 from 'sqlite3'
 import { MessageList, Chat, Message } from '../../types/chat'
 
 interface DB_Interface {
-  chatId: string
+  chatId: number
   messages: MessageList
   promptId: string
+  prompt: string
   temperature: number
   error?: string
 }
 
 interface DB_return_Interface {
-  chatId: string
-  messages: string
+  chatId: number
+  messages: MessageList
   promptId: string
+  prompt: string
   temperature: number
   error?: string
 }
@@ -29,7 +31,7 @@ const DB = () => {
   db.serialize(() => {
     // console.log('create table if not exists')
     db.run(
-      'CREATE TABLE IF NOT EXISTS chat (chatId INTEGER, messages TEXT, promptId TEXT, temperature REAL)',
+      'CREATE TABLE IF NOT EXISTS chat (chatId INTEGER, messages TEXT, promptId TEXT, prompt TEXT, temperature REAL)',
     )
   })
 
@@ -37,6 +39,7 @@ const DB = () => {
     chatId: number,
     messages: MessageList,
     promptId: string,
+    prompt: string,
     temperature: number,
   ) {
     db.serialize(() => {
@@ -47,8 +50,8 @@ const DB = () => {
       // remove all entries from the table that match the chatId
       db.run('DELETE FROM chat WHERE chatId = ?', [chatId])
       db.run(
-        'INSERT INTO chat VALUES (?, ?, ?, ?)',
-        [chatId, strjson, promptId, temperature],
+        'INSERT INTO chat VALUES (?, ?, ?, ?, ?, ?)',
+        [chatId, strjson, promptId, prompt, temperature],
         (err) => {
           if (err) {
             const error = err.message
