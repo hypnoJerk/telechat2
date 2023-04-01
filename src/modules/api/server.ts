@@ -29,34 +29,34 @@ const API = async () => {
     if (!data) {
       throw new Error('No data provided')
     }
-    let messages: Message[] = []
+    let messages: Message[]
 
-    if (!data.messages) {
-      messages = [
-        {
-          role: 'system',
-          content: data.prompt || '',
-        },
-        {
-          role: 'user',
-          content: data.message?.content || '',
-        },
-      ]
-    } else {
-      messages = data.messages.messages
-      messages.push({
-        role: 'user',
-        content: data.message?.content || '',
-      })
-    }
+    // if (!data.messages) {
+    //   messages = [
+    //     {
+    //       role: 'system',
+    //       content: data.prompt || '',
+    //     },
+    //     {
+    //       role: 'user',
+    //       content: data.message?.content || '',
+    //     },
+    //   ]
+    // } else {
+    //   messages = data.messages.messages || []
+    //   messages.push({
+    //     role: 'user',
+    //     content: data.message?.content || '',
+    //   })
+    // }
 
     const requestData = {
       model: 'gpt-3.5-turbo',
-      messages: messages,
+      messages: data.messages?.messages,
       temperature: data.temperature,
       user: data.chatId.toString(),
     }
-    console.log('messages: ', messages)
+    console.log('messages: ', data.messages?.messages)
     try {
       const response = await api.post(apiUrl, requestData, {
         headers: {

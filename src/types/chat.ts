@@ -17,7 +17,7 @@ interface MessageListInterface {
 // chat type
 type Chat = {
   chatId: number
-  messages?: MessageListInterface
+  messages?: MessageList
   message?: Message
   temperature: number
   promptId?: string

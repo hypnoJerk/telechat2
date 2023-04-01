@@ -35,13 +35,13 @@ const DB = () => {
     )
   })
 
-  function addMessage(
-    chatId: number,
-    messages: MessageList,
-    promptId: string,
-    prompt: string,
-    temperature: number,
-  ) {
+  function addMessage({
+    chatId,
+    messages,
+    promptId,
+    prompt,
+    temperature,
+  }: DB_Interface) {
     db.serialize(() => {
       // json stringify the messages array
       const strjson = JSON.stringify(messages)
