@@ -9,7 +9,6 @@ interface ChatAIInterface {
 }
 
 const ChatAi = async (props: ChatAIInterface) => {
-  // TODO: Implement chat AI
   // Use the chatId to get the messages from the database
   // also get the promptId and temperature
   // set prompt with promptId
@@ -62,14 +61,6 @@ const ChatAi = async (props: ChatAIInterface) => {
   const api = await API()
   let returnedChat: any
   try {
-    // let returnedData = await api.chat({
-    //   chatId: chat.chatId,
-    //   messages: chat.messages,
-    //   message: chat.message,
-    //   temperature: chat.temperature,
-    //   promptId: chat.promptId,
-    //   prompt: chat.prompt,
-    // })
     let returnedData = await api.chat(chat)
     returnedChat = returnedData.data.choices[0]
   } catch (error) {

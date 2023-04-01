@@ -19,13 +19,6 @@ interface DB_return_Interface {
   error?: string
 }
 
-// type messages =  [
-//         {
-//             role: string,
-//             content: string
-//         }
-//     ]
-
 const DB = () => {
   const db = new sqlite3.Database('db.sqlite3')
   db.serialize(() => {

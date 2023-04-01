@@ -31,25 +31,6 @@ const API = async () => {
     }
     let messages: Message[]
 
-    // if (!data.messages) {
-    //   messages = [
-    //     {
-    //       role: 'system',
-    //       content: data.prompt || '',
-    //     },
-    //     {
-    //       role: 'user',
-    //       content: data.message?.content || '',
-    //     },
-    //   ]
-    // } else {
-    //   messages = data.messages.messages || []
-    //   messages.push({
-    //     role: 'user',
-    //     content: data.message?.content || '',
-    //   })
-    // }
-
     const requestData = {
       model: 'gpt-3.5-turbo',
       messages: data.messages?.messages,
