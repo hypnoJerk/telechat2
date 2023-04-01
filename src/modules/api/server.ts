@@ -54,8 +54,9 @@ const API = async () => {
       model: 'gpt-3.5-turbo',
       messages: messages,
       temperature: data.temperature,
-      user: data.chatId,
+      user: data.chatId.toString(),
     }
+    console.log('messages: ', messages)
     try {
       const response = await api.post(apiUrl, requestData, {
         headers: {
