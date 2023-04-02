@@ -8,6 +8,10 @@ const CustomCommands = (bot: any) => {
   const CheckAccessMiddleware = (ctx: Context, next: () => any) => {
     CheckAccess(bot, ctx, next)
   }
+
+  // prompt
+  // /prompt or /p
+
   bot.command(['prompt', 'p'], CheckAccessMiddleware, (ctx: any) => {
     const args = ctx.message.text.split(' ')
     const promptId = args[1].toLowerCase()
@@ -33,6 +37,7 @@ const CustomCommands = (bot: any) => {
 
   // prompt reset
   // /reset
+
   bot.command(['reset', 'r'], CheckAccessMiddleware, (ctx: any) => {
     const prompt = Prompt({
       chatId: ctx.chat.id,
@@ -48,6 +53,7 @@ const CustomCommands = (bot: any) => {
 
   // list prompts
   // /list
+
   bot.command(['list', 'l'], CheckAccessMiddleware, (ctx: any) => {
     const prompts = PromptsObj()
     // remove prompts that have hidden: true
@@ -91,6 +97,34 @@ const CustomCommands = (bot: any) => {
     ctx.reply('<b>Here is a detailed list of prompts:</b>\n\n' + reply, {
       parse_mode: 'HTML',
     })
+  })
+
+  // details
+  // /details
+
+  bot.command('details', CheckAccessMiddleware, (ctx: any) => {
+    // take argument and return details about the prompt
+    const args = ctx.update.message.text.split(' ')
+    const prompts = PromptsObj()
+
+    if (args.length > 1) {
+      // args[1] must match a key in the prompts module
+      // check for match
+      const argLower = args[1].toLowerCase()
+      if (prompts[argLower] === undefined) {
+        ctx.reply(
+          'Please enter a valid prompt argument.\n\n Example:\n /details snoopdogg \n\nTo see a list of available prompts use the /list command.',
+        )
+        return
+      }
+      const details = prompts[argLower]
+      const reply = `Name: ${details.name}\nDescription: ${details.description}\nScreen Name: ${details.screenName}`
+      ctx.reply(reply, { parse_mode: 'HTML' })
+    } else {
+      ctx.reply(
+        'Please enter a valid prompt argument.\n\n Example:\n /details snoopdogg \n\nTo see a list of available prompts use the /list command.',
+      )
+    }
   })
 }
 
