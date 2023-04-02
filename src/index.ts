@@ -6,9 +6,9 @@
 //////////////////////////////////////
 // Imports
 import { Telegraf, Context } from 'telegraf'
-import { message } from 'telegraf/filters'
+// import { message } from 'telegraf/filters'
 import { DateTime } from 'luxon'
-import { API } from './modules/api/server'
+// import { API } from './modules/api/server'
 // import modules
 import RequiredCommands from './modules/commands/requiredCommands'
 import CustomCommands from './modules/commands/customCommands'
@@ -28,7 +28,7 @@ if (!process.env.TELE_CHAT_ID) {
 }
 
 // Config Server
-const api = API()
+// const api = API()
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
