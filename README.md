@@ -26,15 +26,15 @@ TELE_CHAT_ID= "your chat id here"
 
 4. Create a file called users.txt and add the telegram user ids of the users you want to allow to use the bot
 
-   ```txt
-   # Path: users.txt
-   # users.txt file
-   # This file should be used to store the telegram user ids of the users you want to allow to use the bot.
-   # Do not commit this file to source control.
-   111111111111
-   222222222222
-   333333333333
-   ```
+```txt
+# Path: users.txt
+# users.txt file
+# This file should be used to store the telegram user ids of the users you want to allow to use the bot.
+# Do not commit this file to source control.
+111111111111
+222222222222
+333333333333
+```
 
 5. Run the bot
 
