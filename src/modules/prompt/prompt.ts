@@ -9,12 +9,9 @@ interface PromptInterface {
 const Prompt = (props: PromptInterface) => {
   function setPrompt() {
     const db = DB()
-    // get prompt from promptsObj
-    // check if promptId exists in promptsObj
-    // if yes, set prompt to promptId
-    // db.setPrompt(props.chatId, props.promptId, props.prompt)
     const promptObj = PromptsObj()
     const prompt = promptObj[props.promptId]
+
     if (prompt) {
       props.prompt = prompt.content
     } else {
@@ -24,6 +21,7 @@ const Prompt = (props: PromptInterface) => {
     db.setPrompt(props.chatId, props.promptId, props.prompt, prompt.temperature)
     return props
   }
+
   function getPrompt() {
     const { chatId } = props
     const db = DB()

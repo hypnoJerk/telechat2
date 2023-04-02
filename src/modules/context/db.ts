@@ -106,24 +106,38 @@ const DB = () => {
     )
   }
 
-  function setPrompt(
+  async function setPrompt(
     chatId: number,
     promptId: string,
     prompt: string,
     temperature: number,
   ) {
-    db.serialize(() => {
-      db.run(
-        'UPDATE chat SET promptId = ?, prompt = ?, MESSAGES = "", TEMPERATURE = ?  WHERE chatId = ?',
-        [promptId, prompt, temperature, chatId],
-        (err) => {
-          if (err) {
-            const error = err.message
-            console.log(error)
-          }
+    const chat = await getMessages(chatId)
+    if (!chat) {
+      const newChat: Chat = {
+        chatId,
+        messages: {
+          messages: [] as Message[],
         },
-      )
-    })
+        promptId,
+        prompt,
+        temperature,
+      }
+      addMessage(newChat as DB_Interface)
+    } else {
+      db.serialize(() => {
+        db.run(
+          'UPDATE chat SET promptId = ?, prompt = ?, MESSAGES = "", TEMPERATURE = ?  WHERE chatId = ?',
+          [promptId, prompt, temperature, chatId],
+          (err) => {
+            if (err) {
+              const error = err.message
+              console.log(error)
+            }
+          },
+        )
+      })
+    }
   }
 
   // db.close();
