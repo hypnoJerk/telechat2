@@ -20,7 +20,6 @@ const OnMessage = (bot: any) => {
         role: 'user',
         content: ctx.message.text,
       },
-      promptId: '1',
     }
     const chatReply = await ChatAi(chatRequest)
     ctx.reply(chatReply.message.content)

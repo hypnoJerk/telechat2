@@ -58,7 +58,7 @@ const ChatAi = async (props: ChatAIInterface) => {
     chatId: chatId,
     message: message,
     temperature: 0.5,
-    promptId: '1',
+    promptId: 'default',
     prompt: 'You are a helpful assistant.',
   }
 
@@ -76,6 +76,7 @@ const ChatAi = async (props: ChatAIInterface) => {
   let returnedChat: any
 
   try {
+    console.log('Sending chat to OpenAI API:', chat)
     let returnedData = await api.chat(chat)
     returnedChat = returnedData.data.choices[0]
   } catch (error) {
@@ -92,7 +93,7 @@ const ChatAi = async (props: ChatAIInterface) => {
     chatId: chat.chatId,
     messages: chat.messages,
     temperature: chat.temperature,
-    promptId: chat.promptId || '1',
+    promptId: chat.promptId || 'default',
     prompt: chat.prompt || 'You are a helpful assistant.',
   })
 

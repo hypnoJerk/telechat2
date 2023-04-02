@@ -37,7 +37,8 @@ const API = async () => {
       temperature: data.temperature,
       user: data.chatId.toString(),
     }
-    console.log('messages: ', data.messages?.messages)
+    console.log('requestData: ', requestData)
+    // console.log('messages: ', data.messages?.messages)
     try {
       const response = await api.post(apiUrl, requestData, {
         headers: {

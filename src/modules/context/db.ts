@@ -85,11 +85,68 @@ const DB = () => {
     })
   }
 
+  function getPrompt(chatId: number) {
+    return new Promise<{ promptId: string; prompt: string }>(
+      (resolve, reject) => {
+        db.serialize(() => {
+          db.get(
+            'SELECT promptId, prompt FROM chat WHERE chatId = ?',
+            [chatId],
+            (err, row: any) => {
+              if (err) {
+                console.log(err.message)
+                reject(err)
+                return
+              }
+              resolve({ promptId: row.promptId, prompt: row.prompt })
+            },
+          )
+        })
+      },
+    )
+  }
+
+  async function setPrompt(
+    chatId: number,
+    promptId: string,
+    prompt: string,
+    temperature: number,
+  ) {
+    const chat = await getMessages(chatId)
+    if (!chat) {
+      const newChat: Chat = {
+        chatId,
+        messages: {
+          messages: [] as Message[],
+        },
+        promptId,
+        prompt,
+        temperature,
+      }
+      addMessage(newChat as DB_Interface)
+    } else {
+      db.serialize(() => {
+        db.run(
+          'UPDATE chat SET promptId = ?, prompt = ?, MESSAGES = "", TEMPERATURE = ?  WHERE chatId = ?',
+          [promptId, prompt, temperature, chatId],
+          (err) => {
+            if (err) {
+              const error = err.message
+              console.log(error)
+            }
+          },
+        )
+      })
+    }
+  }
+
   // db.close();
   return {
     addMessage,
     getMessages,
     deleteMessages,
+    getPrompt,
+    setPrompt,
   }
 }
 
