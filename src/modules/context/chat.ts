@@ -18,7 +18,7 @@ const ChatAi = async (props: ChatAIInterface) => {
   const { chatId, message } = props
   const db = DB()
   const chatFromDb: Chat = await db.getMessages(chatId)
-  console.log('chatFromDb: ', chatFromDb)
+  // console.log('chatFromDb: ', chatFromDb)
   let chat: Chat
   if (!chatFromDb) {
     chat = {
@@ -34,11 +34,11 @@ const ChatAi = async (props: ChatAIInterface) => {
   }
   // MessageList
   let messagesObj: MessageList
-  console.log('chat.messages: ', chat.messages)
+  // console.log('chat.messages: ', chat.messages)
   if (chat.messages !== undefined && chat.messages !== null) {
     messagesObj = JSON.parse(chat.messages.toString())
-    console.log('messagesObj: ', messagesObj)
-    console.log('messagesObj.messages: ', messagesObj.messages)
+    // console.log('messagesObj: ', messagesObj)
+    // console.log('messagesObj.messages: ', messagesObj.messages)
     messagesObj.messages.push({
       role: 'user',
       content: props.message.content || '',
