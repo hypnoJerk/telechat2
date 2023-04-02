@@ -59,7 +59,7 @@ const DB = () => {
   function getMessages(chatId: number) {
     return new Promise<DB_return_Interface>((resolve, reject) => {
       let data: DB_return_Interface
-      console.log('getMessages - serialize chatId: ' + chatId)
+      // console.log('getMessages - serialize chatId: ' + chatId)
       db.serialize(() => {
         db.get(
           'SELECT * FROM chat WHERE chatId = ?',
