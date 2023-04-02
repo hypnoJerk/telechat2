@@ -4,13 +4,13 @@ import * as path from 'path'
 
 const FileUsers = () => {
   function readUsers(): string[] {
-    const usersPath = path.join(__dirname, '../users.txt')
+    const usersPath = path.join(__dirname, '../../users.txt')
     const users = fs.readFileSync(usersPath, 'utf-8')
     return users.split('\n').map((user) => user.trim())
   }
 
   function writeUsers(users: string[]): void {
-    const usersPath = path.join(__dirname, '../users.txt')
+    const usersPath = path.join(__dirname, '../../users.txt')
     fs.writeFileSync(usersPath, users.join('\n'))
   }
 

@@ -1,8 +1,13 @@
+import Context from 'telegraf/typings/context'
 import Prompt from '../../modules/prompt/prompt'
+import CheckAccess from '../auth/checkAuthentication'
 // import { message } from 'telegraf/filters'
 
 const CustomCommands = (bot: any) => {
-  bot.command(['prompt', 'p'], (ctx: any) => {
+  const CheckAccessMiddleware = (ctx: Context, next: () => any) => {
+    CheckAccess(bot, ctx, next)
+  }
+  bot.command(['prompt', 'p'], CheckAccessMiddleware, (ctx: any) => {
     const prompt = Prompt({
       chatId: ctx.chat.id,
       promptId: ctx.message.text.split(' ')[1],
