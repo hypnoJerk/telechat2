@@ -50,6 +50,17 @@ const removeSystemMessageFromMessagesObj = (messagesObj: MessageList): void => {
   }
 }
 
+const removeTopHistoryFromMessagesObj = (
+  messagesObj: MessageList,
+  limit: number,
+): void => {
+  if (messagesObj.messages.length > limit) {
+    messagesObj.messages = messagesObj.messages.slice(
+      messagesObj.messages.length - limit,
+    )
+  }
+}
+
 const ChatAi = async (props: ChatAIInterface) => {
   const { chatId, message } = props
   const db = DB()
@@ -88,6 +99,8 @@ const ChatAi = async (props: ChatAIInterface) => {
 
   // Remove the system message before saving to the database
   removeSystemMessageFromMessagesObj(chat.messages)
+  // Remove the top history to keep the chat history to a reasonable size
+  removeTopHistoryFromMessagesObj(chat.messages, 6)
 
   db.addMessage({
     chatId: chat.chatId,
