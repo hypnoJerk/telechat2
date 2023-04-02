@@ -1,4 +1,6 @@
+import Context from 'telegraf/typings/context'
 import { Chat } from '../../types/chat'
+import CheckAccess from '../auth/checkAuthentication'
 import ChatAi from '../context/chat'
 import { message } from 'telegraf/filters'
 
@@ -13,7 +15,10 @@ import { message } from 'telegraf/filters'
 // }
 
 const OnMessage = (bot: any) => {
-  bot.on(message('text'), async (ctx: any) => {
+  const CheckAccessMiddleware = (ctx: Context, next: () => any) => {
+    CheckAccess(bot, ctx, next)
+  }
+  bot.on(message('text'), CheckAccessMiddleware, async (ctx: any) => {
     const chatRequest = {
       chatId: ctx.chat.id,
       message: {
