@@ -19,6 +19,17 @@ const CustomCommands = (bot: any) => {
     }
     ctx.reply('Prompt set to ' + prompt.promptId)
   })
+
+  // prompt reset
+  // /reset
+  bot.command(['reset', 'r'], CheckAccessMiddleware, (ctx: any) => {
+    const prompt = Prompt({
+      chatId: ctx.chat.id,
+      promptId: 'default',
+      // prompt: 'You are a helpful assistant.',
+    }).setPrompt()
+    ctx.reply('Prompt set to ' + prompt.promptId)
+  })
 }
 
 export default CustomCommands
