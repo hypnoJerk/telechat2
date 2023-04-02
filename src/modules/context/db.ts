@@ -85,11 +85,49 @@ const DB = () => {
     })
   }
 
+  function getPrompt(chatId: number) {
+    return new Promise<{ promptId: string; prompt: string }>(
+      (resolve, reject) => {
+        db.serialize(() => {
+          db.get(
+            'SELECT promptId, prompt FROM chat WHERE chatId = ?',
+            [chatId],
+            (err, row: any) => {
+              if (err) {
+                console.log(err.message)
+                reject(err)
+                return
+              }
+              resolve({ promptId: row.promptId, prompt: row.prompt })
+            },
+          )
+        })
+      },
+    )
+  }
+
+  function setPrompt(chatId: number, promptId: string, prompt: string) {
+    db.serialize(() => {
+      db.run(
+        'UPDATE chat SET promptId = ?, prompt = ? WHERE chatId = ?',
+        [promptId, prompt, chatId],
+        (err) => {
+          if (err) {
+            const error = err.message
+            console.log(error)
+          }
+        },
+      )
+    })
+  }
+
   // db.close();
   return {
     addMessage,
     getMessages,
     deleteMessages,
+    getPrompt,
+    setPrompt,
   }
 }
 
