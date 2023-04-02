@@ -20,7 +20,6 @@ const CustomCommands = (bot: any) => {
       prompt.prompt ===
       'Please enter a valid prompt argument.\n\n Example:\n /prompt snoopdogg \n\nTo see a list of available prompts use the /list command.'
     ) {
-      // console.log('this ran :o')
       ctx.reply(prompt.prompt)
       return
     } else {
@@ -66,6 +65,32 @@ const CustomCommands = (bot: any) => {
         list +
         '\n\nTo set a prompt use the /prompt command.\neg: /p snoopdogg\n\nTo get details about a prompt use the /details command.\neg: /details wizard. \n\nTo see a detailed list of prompts use the /list_detailed command.',
     )
+  })
+
+  // list_detailed
+  // /list_detailed
+  bot.command('list_detailed', CheckAccessMiddleware, (ctx: any) => {
+    const prompts = PromptsObj()
+    // remove prompts that have hidden: true
+    for (const key in prompts) {
+      if (prompts[key].hidden) {
+        delete prompts[key]
+      }
+    }
+    // reply with a formatted list of prompts with their descriptions
+    let reply = ''
+    // remove prompts that have hidden: true
+    for (const key in prompts) {
+      if (prompts[key].hidden === true) {
+        delete prompts[key]
+      }
+    }
+    for (const key in prompts) {
+      reply += `<b>${key}</b> - ${prompts[key].description} \n\n`
+    }
+    ctx.reply('<b>Here is a detailed list of prompts:</b>\n\n' + reply, {
+      parse_mode: 'HTML',
+    })
   })
 }
 
