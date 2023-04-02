@@ -13,7 +13,10 @@ const CustomCommands = (bot: any) => {
       promptId: ctx.message.text.split(' ')[1],
       // prompt: 'You are a helpful assistant.',
     }).setPrompt()
-
+    if (prompt.prompt === 'That prompt does not exist.') {
+      ctx.reply(prompt.prompt)
+      return
+    }
     ctx.reply('Prompt set to ' + prompt.promptId)
   })
 }

@@ -14,11 +14,16 @@ const Prompt = (props: PromptInterface) => {
 
     if (prompt) {
       props.prompt = prompt.content
+      db.setPrompt(
+        props.chatId,
+        props.promptId,
+        props.prompt,
+        prompt.temperature,
+      )
     } else {
-      props.prompt = 'You are a helpful assistant.'
+      props.prompt = 'That prompt does not exist.'
+      return props
     }
-
-    db.setPrompt(props.chatId, props.promptId, props.prompt, prompt.temperature)
     return props
   }
 
