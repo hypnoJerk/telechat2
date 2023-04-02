@@ -21,7 +21,8 @@ const Prompt = (props: PromptInterface) => {
         prompt.temperature,
       )
     } else {
-      props.prompt = 'That prompt does not exist.'
+      props.prompt =
+        'Please enter a valid prompt argument.\n\n Example:\n /details snoopdogg \n\nTo see a list of available prompts use the /list command.'
       return props
     }
     return props
