@@ -1,5 +1,3 @@
-// import Prompts from '../prompt/promptsObj'
-import DB from '../../modules/context/db'
 import Prompt from '../../modules/prompt/prompt'
 // import { message } from 'telegraf/filters'
 
