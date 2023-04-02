@@ -20,13 +20,16 @@ const CustomCommands = (bot: any) => {
       prompt.prompt ===
       'Please enter a valid prompt argument.\n\n Example:\n /prompt snoopdogg \n\nTo see a list of available prompts use the /list command.'
     ) {
+      // console.log('this ran :o')
       ctx.reply(prompt.prompt)
       return
+    } else {
+      const name = PromptsObj()[promptId].name || 'a helpful assistant'
+      ctx.reply(
+        `Prompt set to ${prompt.promptId}\n\nYou are now chatting with ${name}! Say hi!`,
+      )
+      console.log('this just ran :o')
     }
-    const name = PromptsObj()[promptId].name
-    ctx.reply(
-      `Prompt set to ${prompt.promptId}\n\nYou are now chatting with ${name}! Say hi!`,
-    )
   })
 
   // prompt reset
@@ -41,6 +44,27 @@ const CustomCommands = (bot: any) => {
       'Prompt set to ' +
         prompt.promptId +
         '. Chat history and personality reset. Say hi!',
+    )
+  })
+
+  // list prompts
+  // /list
+  bot.command(['list', 'l'], CheckAccessMiddleware, (ctx: any) => {
+    const prompts = PromptsObj()
+    // remove prompts that have hidden: true
+    for (const key in prompts) {
+      if (prompts[key].hidden) {
+        delete prompts[key]
+      }
+    }
+    let list = ''
+    for (const key in prompts) {
+      list += `${key}: ${prompts[key].name}\n`
+    }
+    ctx.reply(
+      'Here are the available prompts:\n\n' +
+        list +
+        '\n\nTo set a prompt use the /prompt command.\neg: /p snoopdogg\n\nTo get details about a prompt use the /details command.\neg: /details wizard. \n\nTo see a detailed list of prompts use the /list_detailed command.',
     )
   })
 }

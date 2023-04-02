@@ -22,7 +22,7 @@ const Prompt = (props: PromptInterface) => {
       )
     } else {
       props.prompt =
-        'Please enter a valid prompt argument.\n\n Example:\n /details snoopdogg \n\nTo see a list of available prompts use the /list command.'
+        'Please enter a valid prompt argument.\n\n Example:\n /prompt snoopdogg \n\nTo see a list of available prompts use the /list command.'
       return props
     }
     return props
