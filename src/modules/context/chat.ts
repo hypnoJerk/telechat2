@@ -2,64 +2,62 @@ import { MessageList, Chat, Message } from '../../types/chat'
 import { API } from '../../modules/api/server'
 import DB from '../../modules/context/db'
 
-// interface
 interface ChatAIInterface {
   chatId: number
   message: Message
 }
 
-const ChatAi = async (props: ChatAIInterface) => {
-  // Use the chatId to get the messages from the database
-  // also get the promptId and temperature
-  // set prompt with promptId
-  // set temperature with temperature
+const createInitialMessagesObj = (chat: Chat): MessageList => ({
+  messages: [
+    {
+      role: 'system',
+      content: chat.prompt || '',
+    },
+  ],
+})
 
-  // Get the chat from the database
+const addUserMessageToMessagesObj = (
+  messagesObj: MessageList,
+  userMessageContent: string,
+): void => {
+  messagesObj.messages.push({
+    role: 'user',
+    content: userMessageContent || '',
+  })
+}
+
+const addAssistantMessageToMessagesObj = (
+  messagesObj: MessageList,
+  assistantMessageContent: string,
+): void => {
+  messagesObj.messages.push({
+    role: 'assistant',
+    content: assistantMessageContent,
+  })
+}
+
+const ChatAi = async (props: ChatAIInterface) => {
   const { chatId, message } = props
   const db = DB()
   const chatFromDb: Chat = await db.getMessages(chatId)
-  // console.log('chatFromDb: ', chatFromDb)
-  let chat: Chat
-  if (!chatFromDb) {
-    chat = {
-      chatId: chatId,
-      message: message,
-      temperature: 0.5,
-      promptId: '1',
-      prompt: 'You are a helpful assistant.',
-    }
-  } else {
-    // const { messages, promptId, prompt, temperature } = chatFromDb
-    chat = chatFromDb
+  let chat: Chat = chatFromDb || {
+    chatId: chatId,
+    message: message,
+    temperature: 0.5,
+    promptId: '1',
+    prompt: 'You are a helpful assistant.',
   }
-  // MessageList
-  let messagesObj: MessageList
-  // console.log('chat.messages: ', chat.messages)
-  if (chat.messages !== undefined && chat.messages !== null) {
-    messagesObj = JSON.parse(chat.messages.toString())
-    // console.log('messagesObj: ', messagesObj)
-    // console.log('messagesObj.messages: ', messagesObj.messages)
-    messagesObj.messages.push({
-      role: 'user',
-      content: props.message.content || '',
-    })
-  } else {
-    messagesObj = {
-      messages: [
-        {
-          role: 'system',
-          content: chat.prompt || '',
-        },
-        {
-          role: 'user',
-          content: chat.message?.content || '',
-        },
-      ],
-    }
-  }
+
+  let messagesObj: MessageList = chat.messages
+    ? JSON.parse(chat.messages.toString())
+    : createInitialMessagesObj(chat)
+
+  addUserMessageToMessagesObj(messagesObj, message.content)
+
   chat.messages = messagesObj
   const api = await API()
   let returnedChat: any
+
   try {
     let returnedData = await api.chat(chat)
     returnedChat = returnedData.data.choices[0]
@@ -67,13 +65,9 @@ const ChatAi = async (props: ChatAIInterface) => {
     console.error('Error while communicating with OpenAI API:', error)
     throw error
   }
-  // push the returned message to the messages array
-  chat.messages.messages.push({
-    role: 'assistant',
-    content: returnedChat.message.content,
-  })
 
-  // save to database
+  addAssistantMessageToMessagesObj(chat.messages, returnedChat.message.content)
+
   db.addMessage({
     chatId: chat.chatId,
     messages: chat.messages,
@@ -81,6 +75,7 @@ const ChatAi = async (props: ChatAIInterface) => {
     promptId: chat.promptId || '1',
     prompt: chat.prompt || 'You are a helpful assistant.',
   })
+
   return returnedChat
 }
 
