@@ -1,7 +1,7 @@
-'use strict'
-Object.defineProperty(exports, '__esModule', { value: true })
-const Prompts = () => {
-  const prompts = {
+import Prompts from '../../types/prompt'
+
+const PromptsObj = (): Prompts => {
+  const prompts: any = {
     default: {
       name: 'ChatGPT',
       screenName: 'chatGPT',
@@ -298,5 +298,5 @@ const Prompts = () => {
   }
   return prompts
 }
-const _default = Prompts
-export { _default as default }
+
+export default PromptsObj

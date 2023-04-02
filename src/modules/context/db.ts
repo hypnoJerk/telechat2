@@ -106,11 +106,16 @@ const DB = () => {
     )
   }
 
-  function setPrompt(chatId: number, promptId: string, prompt: string) {
+  function setPrompt(
+    chatId: number,
+    promptId: string,
+    prompt: string,
+    temperature: number,
+  ) {
     db.serialize(() => {
       db.run(
-        'UPDATE chat SET promptId = ?, prompt = ? WHERE chatId = ?',
-        [promptId, prompt, chatId],
+        'UPDATE chat SET promptId = ?, prompt = ?, MESSAGES = "", TEMPERATURE = ?  WHERE chatId = ?',
+        [promptId, prompt, temperature, chatId],
         (err) => {
           if (err) {
             const error = err.message
