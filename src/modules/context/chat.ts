@@ -7,13 +7,8 @@ interface ChatAIInterface {
   message: Message
 }
 
-const createInitialMessagesObj = (chat: Chat): MessageList => ({
-  messages: [
-    {
-      role: 'system',
-      content: chat.prompt || '',
-    },
-  ],
+const createInitialMessagesObj = (): MessageList => ({
+  messages: [],
 })
 
 const addUserMessageToMessagesObj = (
@@ -36,6 +31,25 @@ const addAssistantMessageToMessagesObj = (
   })
 }
 
+const prependSystemMessageToMessagesObj = (
+  messagesObj: MessageList,
+  systemMessageContent: string = '',
+): void => {
+  messagesObj.messages.unshift({
+    role: 'system',
+    content: systemMessageContent,
+  })
+}
+
+const removeSystemMessageFromMessagesObj = (messagesObj: MessageList): void => {
+  if (
+    messagesObj.messages.length > 0 &&
+    messagesObj.messages[0].role === 'system'
+  ) {
+    messagesObj.messages.shift()
+  }
+}
+
 const ChatAi = async (props: ChatAIInterface) => {
   const { chatId, message } = props
   const db = DB()
@@ -50,9 +64,12 @@ const ChatAi = async (props: ChatAIInterface) => {
 
   let messagesObj: MessageList = chat.messages
     ? JSON.parse(chat.messages.toString())
-    : createInitialMessagesObj(chat)
+    : createInitialMessagesObj()
 
   addUserMessageToMessagesObj(messagesObj, message.content)
+
+  // Prepend the system message before sending to the chat API
+  prependSystemMessageToMessagesObj(messagesObj, chat.prompt)
 
   chat.messages = messagesObj
   const api = await API()
@@ -67,6 +84,9 @@ const ChatAi = async (props: ChatAIInterface) => {
   }
 
   addAssistantMessageToMessagesObj(chat.messages, returnedChat.message.content)
+
+  // Remove the system message before saving to the database
+  removeSystemMessageFromMessagesObj(chat.messages)
 
   db.addMessage({
     chatId: chat.chatId,
