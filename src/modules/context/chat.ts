@@ -3,6 +3,11 @@ import { API } from '../../modules/api/server'
 import DB from '../../modules/context/db'
 import CodeBlocksParse from '../parse/codeBlocksParse'
 import PromptsObj from '../prompt/promptsObj'
+import logger from '../logger/logger'
+import { encode } from 'gpt-3-encoder'
+import { DateTime } from 'luxon'
+
+const now = DateTime.local()
 
 interface ChatAIInterface {
   chatId: number
@@ -94,6 +99,39 @@ const ChatAi = async (props: ChatAIInterface) => {
   prependSystemMessageToMessagesObj(messagesObj, chat.prompt)
 
   chat.messages = messagesObj
+
+  function calculateMessageCost(tokens: number): number {
+    const ratePerThousand: number = 0.002
+    const ratePerToken: number = ratePerThousand / 1000
+    let cost: number = tokens * ratePerToken
+    cost = Math.round(cost * 100000) / 100000
+    return cost
+  }
+  const concatMessages = (messages: Message[]): string => {
+    let allMessages: string = ''
+    messages.forEach((message: Message) => {
+      allMessages += message.content + ' '
+    })
+    return allMessages
+  }
+  const allMessage = concatMessages(messagesObj.messages)
+  let tokenizedRequest = encode(allMessage)
+  const requestCost = calculateMessageCost(tokenizedRequest.length)
+  logger.info({
+    timestamp: now.toFormat('yyyy-MM-dd HH:mm:ss'),
+    chatId: chatId,
+    prompt: chat.promptId,
+    message: {
+      type: 'input',
+      text: {
+        chars_original: chat.message?.content.length,
+        chars: allMessage.length,
+        token: tokenizedRequest.length,
+        cost: requestCost,
+      },
+    },
+  })
+
   const api = await API()
   let returnedChat: any
   let returnedChatMessage: any
@@ -127,6 +165,23 @@ const ChatAi = async (props: ChatAIInterface) => {
     temperature: chat.temperature,
     promptId: chat.promptId || 'default',
     prompt: chat.prompt || 'You are a helpful assistant.',
+  })
+
+  const tokenizedResponse = encode(returnedChatMessage.content)
+  const responseCost = calculateMessageCost(tokenizedResponse.length)
+  logger.info({
+    timestamp: now.toFormat('yyyy-MM-dd HH:mm:ss'),
+    chatId: chatId,
+    // systemPrompt: arg,
+    message: {
+      type: 'output',
+      text: {
+        chars_original: returnedChatMessage.content.length,
+        chars: returnedChatMessage.content.length,
+        token: tokenizedResponse.length,
+        cost: responseCost,
+      },
+    },
   })
 
   // Modify the returnedChat object to include the parsed message
