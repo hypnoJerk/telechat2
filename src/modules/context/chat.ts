@@ -1,10 +1,21 @@
 import { MessageList, Chat, Message } from '../../types/chat'
 import { API } from '../../modules/api/server'
 import DB from '../../modules/context/db'
+import CodeBlocksParse from '../parse/codeBlocksParse'
+import PromptsObj from '../prompt/promptsObj'
 
 interface ChatAIInterface {
   chatId: number
   message: Message
+}
+
+type ChatOut = {
+  chatId: number
+  screenName: string
+  message: Message
+  temperature: number
+  promptId: string
+  prompt: string
 }
 
 const createInitialMessagesObj = (): MessageList => ({
@@ -90,6 +101,11 @@ const ChatAi = async (props: ChatAIInterface) => {
     console.log('Sending chat to OpenAI API:', chat)
     let returnedData = await api.chat(chat)
     returnedChat = returnedData.data.choices[0]
+    const returnedChatMessage = returnedChat.message
+    const promptId = chat.promptId || 'default'
+    const screenName = PromptsObj()[promptId].screenName || 'default'
+    returnedChat.screenName = screenName
+    returnedChat.message.content = CodeBlocksParse(returnedChatMessage.content)
   } catch (error) {
     console.error('Error while communicating with OpenAI API:', error)
     throw error

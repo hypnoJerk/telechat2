@@ -1,7 +1,7 @@
 import Prompts from '../../types/prompt'
 
 const PromptsObj = (): Prompts => {
-  const prompts: any = {
+  const prompts: Prompts = {
     default: {
       name: 'ChatGPT',
       screenName: 'chatGPT',
