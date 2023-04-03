@@ -2,7 +2,7 @@ const CodeBlocksParse = (text: string): string => {
   function escapeHtml(unsafeText: string) {
     return (
       unsafeText
-        .replace(/&/g, '&amp;')
+        .replace(/&(?!amp;|lt;|gt;|#\d+;)/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
@@ -42,24 +42,26 @@ const CodeBlocksParse = (text: string): string => {
     return output
   }
 
-  function convertCodeBlocks(text: string): string {
-    text = escapeHtml(text)
-    text = codeBlockBackTickReplace(text)
-    // const quotedStringRegex = /"((?:\\.|[^"\\])*)"/g // matches all quoted strings
+  function convertCodeBlocks(preparedText: string): string {
+    const escapedText = escapeHtml(preparedText)
+    const textWithBackTicksReplaced = codeBlockBackTickReplace(escapedText)
 
     const codeBlockPreFormatRegex = /```(\w*)\n([\s\S]*?)\n```/g // matches all code blocks with language identifier
-    return text.replace(codeBlockPreFormatRegex, (match, lang, codeBlock) => {
-      let languageClass = 'language'
-      if (lang) {
-        languageClass = 'language-' + lang.toLowerCase()
-      }
+    return textWithBackTicksReplaced.replace(
+      codeBlockPreFormatRegex,
+      (match, lang, codeBlock) => {
+        let languageClass = 'language'
+        if (lang) {
+          languageClass = 'language-' + lang.toLowerCase()
+        }
 
-      const escapedCodeBlock = codeBlock
-      // wrap the matched code block with <pre><code class="[languageClass]"> and </code></pre>,
-      // removing the triple backticks
-      const preformatted = `<pre><code class="${languageClass}">${escapedCodeBlock}</code></pre>`
-      return preformatted
-    })
+        const escapedCodeBlock = escapeHtml(codeBlock)
+        // wrap the matched code block with <pre><code class="[languageClass]"> and </code></pre>,
+        // removing the triple backticks
+        const preformatted = `<pre><code class="${languageClass}">${escapedCodeBlock}</code></pre>`
+        return preformatted
+      },
+    )
   }
 
   return convertCodeBlocks(text)

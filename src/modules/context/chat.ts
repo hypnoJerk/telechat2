@@ -96,16 +96,19 @@ const ChatAi = async (props: ChatAIInterface) => {
   chat.messages = messagesObj
   const api = await API()
   let returnedChat: any
+  let returnedChatMessage: any
 
   try {
     console.log('Sending chat to OpenAI API:', chat)
     let returnedData = await api.chat(chat)
     returnedChat = returnedData.data.choices[0]
-    const returnedChatMessage = returnedChat.message
+    returnedChatMessage = returnedChat.message
     const promptId = chat.promptId || 'default'
     const screenName = PromptsObj()[promptId].screenName || 'default'
     returnedChat.screenName = screenName
-    returnedChat.message.content = CodeBlocksParse(returnedChatMessage.content)
+    // returnedChat.message.content = CodeBlocksParse(returnedChatMessage.content)
+    // const parsedMessage = CodeBlocksParse(returnedChatMessage.content)
+    // returnedChat.message.content = parsedMessage
   } catch (error) {
     console.error('Error while communicating with OpenAI API:', error)
     throw error
@@ -126,7 +129,18 @@ const ChatAi = async (props: ChatAIInterface) => {
     prompt: chat.prompt || 'You are a helpful assistant.',
   })
 
-  return returnedChat
+  // Modify the returnedChat object to include the parsed message
+  const parsedMessage = CodeBlocksParse(returnedChatMessage.content)
+  const parsedReturnedChat = {
+    ...returnedChat,
+    message: {
+      ...returnedChat.message,
+      content: parsedMessage,
+    },
+  }
+
+  // Return the modified returnedChat object with parsed code blocks
+  return parsedReturnedChat
 }
 
 export default ChatAi
