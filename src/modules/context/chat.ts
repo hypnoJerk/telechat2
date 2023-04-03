@@ -124,7 +124,7 @@ const ChatAi = async (props: ChatAIInterface) => {
     message: {
       type: 'input',
       text: {
-        chars_original: chat.message?.content.length,
+        chars_original: message.content.length,
         chars: allMessage.length,
         token: tokenizedRequest.length,
         cost: requestCost,
