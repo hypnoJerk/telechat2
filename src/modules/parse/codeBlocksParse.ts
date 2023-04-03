@@ -27,7 +27,7 @@ const CodeBlocksParse = (text: string): string => {
           if (!inSingleBacktick) {
             output += `<code>${buffer.slice(1)}`
           } else {
-            output += `${buffer.slice(0, -1)}</code>`
+            output += `${buffer.slice(0, -1)}&#96;</code>`
           }
           inSingleBacktick = !inSingleBacktick
         } else {
