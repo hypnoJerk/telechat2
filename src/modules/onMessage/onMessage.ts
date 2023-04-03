@@ -1,18 +1,18 @@
 import Context from 'telegraf/typings/context'
-import { Chat } from '../../types/chat'
+import { Message } from '../../types/chat'
 import CheckAccess from '../auth/checkAuthentication'
 import ChatAi from '../context/chat'
 import { message } from 'telegraf/filters'
 
 // From types/chat
-// type Chat = {
-//   chatId: number
-//   messages?: MessageListInterface
-//   message?: Message
-//   temperature: number
-//   promptId?: string
-//   prompt?: string
-// }
+type Chat = {
+  chatId: number
+  screenName: string
+  message: Message
+  temperature: number
+  promptId: string
+  prompt: string
+}
 
 const OnMessage = (bot: any) => {
   const CheckAccessMiddleware = (ctx: Context, next: () => any) => {
@@ -26,8 +26,10 @@ const OnMessage = (bot: any) => {
         content: ctx.message.text,
       },
     }
-    const chatReply = await ChatAi(chatRequest)
-    ctx.reply(chatReply.message.content)
+    const chatReply: Chat = await ChatAi(chatRequest)
+    ctx.reply(`<b>${chatReply.screenName}</b>:  ` + chatReply.message.content, {
+      parse_mode: 'HTML',
+    })
   })
 }
 

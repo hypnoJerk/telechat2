@@ -1,7 +1,8 @@
 // axios server for openAI API
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import AxiosRateLimit from 'axios-rate-limit'
 import { MessageList, Chat, Message } from '../../types/chat'
+import logger from '../logger/logger'
 
 interface ChatAPIInterface {
   chatId: number
@@ -37,7 +38,7 @@ const API = async () => {
       temperature: data.temperature,
       user: data.chatId.toString(),
     }
-    console.log('requestData: ', requestData)
+    // console.log('requestData: ', requestData)
     // console.log('messages: ', data.messages?.messages)
     try {
       const response = await api.post(apiUrl, requestData, {
@@ -48,7 +49,30 @@ const API = async () => {
       })
       return response
     } catch (error) {
-      console.error('Error while communicating with OpenAI API:', error)
+      const axiosError = error as AxiosError
+      // const errorMessage = axiosError.response?.data as {
+      //   error: {
+      //     message: string
+      //     type: string
+      //     param: string
+      //     code: string
+      //   }
+      // }
+      // const errorMessageText = errorMessage.error.message ?? ''
+      // logger.error({
+      //   // timestamp: timestamp,
+      //   chatId: data.chatId.toString(),
+      //   // systemPrompt: arg,
+      //   error:
+      //     ' status: ' +
+      //     axiosError.response?.status +
+      //     ' statusText: ' +
+      //     axiosError.response?.statusText,
+      // })
+      // console.error(
+      //   'Error while communicating with OpenAI API:',
+      //   errorMessageText,
+      // )
       throw error
     }
   }

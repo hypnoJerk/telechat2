@@ -8,6 +8,10 @@ interface Prompt {
   content: string
 }
 
-type Prompts = Record<string, Prompt>
+interface Prompts {
+  [key: string]: Prompt
+}
+
+// type Prompts = Record<string, Prompt>
 
 export default Prompts

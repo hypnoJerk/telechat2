@@ -31,7 +31,7 @@ const FileUsers = () => {
 
   function checkUser(user: string): boolean {
     const users = readUsers()
-    console.log('users ', users)
+    // console.log('users ', users)
     return users.includes(user)
   }
   return {

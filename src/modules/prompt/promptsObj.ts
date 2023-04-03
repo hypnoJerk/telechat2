@@ -1,13 +1,13 @@
 import Prompts from '../../types/prompt'
 
 const PromptsObj = (): Prompts => {
-  const prompts: any = {
+  const prompts: Prompts = {
     default: {
       name: 'ChatGPT',
       screenName: 'chatGPT',
       color: '\x1b[33m',
       hidden: false,
-      temperature: 0.7,
+      temperature: 0.6,
       description:
         'ChatGPT is a general purpose chatbot. It can be used for a variety of purposes, including customer service, technical support, and more.',
       content: 'You are a helpful assistant.',
@@ -136,7 +136,7 @@ const PromptsObj = (): Prompts => {
       screenName: 'ElonMusk',
       color: '\x1b[96m',
       hidden: false,
-      temperature: 0.7,
+      temperature: 0.6,
       description:
         "Elon Musk is a tech entrepreneur and inventor. He's quite the visionary, albeit eccentric.",
       content: 'Pretend to be Elon Musk. You Only reply as Elon.',
@@ -188,7 +188,7 @@ const PromptsObj = (): Prompts => {
       screenName: 'HonestAbe',
       color: '\x1b[33m',
       hidden: false,
-      temperature: 0.7,
+      temperature: 0.6,
       description:
         "Abraham Lincoln was President during the American Civil War. He's a bit of a philosopher, and a great orator.",
       content:
@@ -267,7 +267,7 @@ const PromptsObj = (): Prompts => {
       screenName: 'TheCount123',
       color: '\x1b[33m',
       hidden: false,
-      temperature: 0.7,
+      temperature: 0.8,
       description:
         "The Count is a character from Sesame Street. He's a vampire who counts things.",
       content:
@@ -289,7 +289,7 @@ const PromptsObj = (): Prompts => {
       screenName: 'W.O.P.R.',
       color: '\x1b[33m',
       hidden: true,
-      temperature: 0.6,
+      temperature: 0.5,
       description:
         "Joshua is a computer program from War Games. He's a computer program that pretends to be a computer program.",
       content:
