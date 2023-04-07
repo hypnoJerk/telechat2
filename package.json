@@ -14,7 +14,12 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
+    "@eslint/create-config": "0.4.2",
     "@types/luxon": "^3.2.0",
-    "@types/node": "^18.15.3"
+    "@types/node": "^18.15.3",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "eslint": "^8.38.0",
+    "eslint-plugin-react": "latest"
   }
 }
