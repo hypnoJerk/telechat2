@@ -49,7 +49,7 @@ const addAssistantMessageToMessagesObj = (
 
 const prependSystemMessageToMessagesObj = (
   messagesObj: MessageList,
-  systemMessageContent: string = '',
+  systemMessageContent = '',
 ): void => {
   messagesObj.messages.unshift({
     role: 'system',
@@ -81,7 +81,7 @@ const ChatAi = async (props: ChatAIInterface) => {
   const { chatId, message } = props
   const db = DB()
   const chatFromDb: Chat = await db.getMessages(chatId)
-  let chat: Chat = chatFromDb || {
+  const chat: Chat = chatFromDb || {
     chatId: chatId,
     message: message,
     temperature: 0.5,
@@ -89,7 +89,7 @@ const ChatAi = async (props: ChatAIInterface) => {
     prompt: 'You are a helpful assistant.',
   }
 
-  let messagesObj: MessageList = chat.messages
+  const messagesObj: MessageList = chat.messages
     ? JSON.parse(chat.messages.toString())
     : createInitialMessagesObj()
 
@@ -101,21 +101,21 @@ const ChatAi = async (props: ChatAIInterface) => {
   chat.messages = messagesObj
 
   function calculateMessageCost(tokens: number): number {
-    const ratePerThousand: number = 0.002
+    const ratePerThousand = 0.002
     const ratePerToken: number = ratePerThousand / 1000
     let cost: number = tokens * ratePerToken
     cost = Math.round(cost * 100000) / 100000
     return cost
   }
   const concatMessages = (messages: Message[]): string => {
-    let allMessages: string = ''
+    let allMessages = ''
     messages.forEach((message: Message) => {
       allMessages += message.content + ' '
     })
     return allMessages
   }
   const allMessage = concatMessages(messagesObj.messages)
-  let tokenizedRequest = encode(allMessage)
+  const tokenizedRequest = encode(allMessage)
   const requestCost = calculateMessageCost(tokenizedRequest.length)
   logger.info({
     timestamp: now.toFormat('yyyy-MM-dd HH:mm:ss'),
@@ -138,7 +138,7 @@ const ChatAi = async (props: ChatAIInterface) => {
 
   try {
     console.log('Sending chat to OpenAI API:', chat)
-    let returnedData = await api.chat(chat)
+    const returnedData = await api.chat(chat)
     returnedChat = returnedData.data.choices[0]
     returnedChatMessage = returnedChat.message
     const promptId = chat.promptId || 'default'
