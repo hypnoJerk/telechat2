@@ -31,7 +31,6 @@ const CustomCommands = (bot: any) => {
       ctx.reply(
         `Prompt set to ${prompt.promptId}\n\nYou are now chatting with ${name}! Say hi!`,
       )
-      console.log('this just ran :o')
     }
   })
 

@@ -14,14 +14,34 @@ interface ChatAIInterface {
   message: Message
 }
 
-type ChatOut = {
-  chatId: number
+type ReturnedChat = {
+  id: string
+  object: string
+  created: number
+  model: string
+  usage: {
+    prompt_tokens: number
+    completion_tokens: number
+    total_tokens: number
+  }
+  choices: [
+    {
+      message: Message
+      finish_reason: string
+      index: number
+    },
+  ]
   screenName: string
-  message: Message
-  temperature: number
-  promptId: string
-  prompt: string
 }
+
+// type ChatOut = {
+//   chatId: number
+//   screenName: string
+//   message: Message
+//   temperature: number
+//   promptId: string
+//   prompt: string
+// }
 
 const createInitialMessagesObj = (): MessageList => ({
   messages: [],
@@ -133,14 +153,16 @@ const ChatAi = async (props: ChatAIInterface) => {
   })
 
   const api = await API()
-  let returnedChat: any
-  let returnedChatMessage: any
+  let returnedChat: ReturnedChat
+  let returnedChatMessage: Message
 
   try {
-    console.log('Sending chat to OpenAI API:', chat)
+    // console.log('Sending chat to OpenAI API:', chat)
     const returnedData = await api.chat(chat)
-    returnedChat = returnedData.data.choices[0]
-    returnedChatMessage = returnedChat.message
+    // console.log('Received chat from OpenAI API:', returnedData)
+    // console.log('Returned Chat returnedChat: ', returnedData.data.choices[0])
+    returnedChat = returnedData.data
+    returnedChatMessage = returnedChat.choices[0].message
     const promptId = chat.promptId || 'default'
     const screenName = PromptsObj()[promptId].screenName || 'default'
     returnedChat.screenName = screenName
@@ -152,7 +174,10 @@ const ChatAi = async (props: ChatAIInterface) => {
     throw error
   }
 
-  addAssistantMessageToMessagesObj(chat.messages, returnedChat.message.content)
+  addAssistantMessageToMessagesObj(
+    chat.messages,
+    returnedChat.choices[0].message.content,
+  )
 
   // Remove the system message before saving to the database
   removeSystemMessageFromMessagesObj(chat.messages)
@@ -189,7 +214,7 @@ const ChatAi = async (props: ChatAIInterface) => {
   const parsedReturnedChat = {
     ...returnedChat,
     message: {
-      ...returnedChat.message,
+      ...returnedChat.choices[0].message,
       content: parsedMessage,
     },
   }

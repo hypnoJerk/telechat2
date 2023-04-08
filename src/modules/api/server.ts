@@ -2,7 +2,7 @@
 import axios, { AxiosError } from 'axios'
 import AxiosRateLimit from 'axios-rate-limit'
 import { MessageList, Chat, Message } from '../../types/chat'
-import logger from '../logger/logger'
+// import logger from '../logger/logger'
 
 interface ChatAPIInterface {
   chatId: number
