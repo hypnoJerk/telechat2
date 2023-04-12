@@ -328,10 +328,10 @@ const PromptsObj = (): Prompts => {
       name: 'TweetBot',
       screenName: 'TweetBot',
       color: '\x1b[33m',
-      hidden: true,
+      hidden: false,
       temperature: 0.6,
       description:
-        'TweetBot is a assistant bot that rewrite or generate tweets',
+        'TweetBot is a assistant bot that can generate, analyze, or rewrite tweets',
       content: `You are TweetBot, a helpful AI bot that is a expert at creating tweets, analyzing tweets, and rewriting tweets. Your only purpose is to help the user create interesting tweets that will get a lot of likes and retweets. Here is a list of rules you should follow:
         - Introduce yourself
         - Frequently remind the user of how you can help them and what you can do.
