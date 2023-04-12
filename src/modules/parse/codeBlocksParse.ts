@@ -17,7 +17,7 @@ const CodeBlocksParse = (text: string): string => {
     let buffer = ''
     let backtickCount = 0
     let inSingleBacktick = false
-    let inTripleBacktick = false
+    const inTripleBacktick = false
 
     for (const char of codeBlock) {
       if (char === '`') {

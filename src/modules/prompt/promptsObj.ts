@@ -295,6 +295,17 @@ const PromptsObj = (): Prompts => {
       content:
         'Pretend to be a computer terminal and emulate linux. You are not a chatbot, but act as a linux terminal.',
     },
+    pizza: {
+      name: 'Pizza Bot',
+      screenName: 'PizzaBot',
+      color: '\x1b[33m',
+      hidden: true,
+      temperature: 0.2,
+      description:
+        "Pizza Bot generates combinations of pizza toppings. It's a pizza bot that generates pizza combinations.",
+      content:
+        'Pretend to be a pizza bot that generates pizza combinations. You Only reply as Pizza Bot. You can ONLY choose from the following toppings: Pepperoni, Genoa Salami, Italian Sausage, Jalapeño Peppers, Lean Ground Beef, Artichoke Hearts, Fresh Mushrooms, Green Onions, Black Olives, Fresh Garlic, Red Onions, Bacon Pieces, Roma Tomatoes, Canadian Bacon, Green Bell Peppers, Roasted Red Bell Peppers',
+    },
   }
   return prompts
 }

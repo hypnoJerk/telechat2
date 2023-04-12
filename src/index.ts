@@ -5,7 +5,7 @@
 // Author: Shaun Hallier @hypnojerk //
 //////////////////////////////////////
 // Imports
-import { Telegraf, Context } from 'telegraf'
+import { Telegraf } from 'telegraf'
 // import { message } from 'telegraf/filters'
 import { DateTime } from 'luxon'
 // import { API } from './modules/api/server'
@@ -18,7 +18,10 @@ import OnMessage from './modules/onMessage/onMessage'
 console.log('Initiating bot...')
 const now = DateTime.local()
 
-require('dotenv').config()
+// convert to import require('dotenv').config()
+import dotenv from 'dotenv'
+dotenv.config()
+
 // Check for environment variables
 if (!process.env.BOT_TOKEN) {
   throw new Error('BOT_TOKEN is not defined')

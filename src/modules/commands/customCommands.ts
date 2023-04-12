@@ -14,7 +14,10 @@ const CustomCommands = (bot: any) => {
 
   bot.command(['prompt', 'p'], CheckAccessMiddleware, (ctx: any) => {
     const args = ctx.message.text.split(' ')
-    const promptId = args[1].toLowerCase()
+    let promptId = args[1].toLowerCase()
+    if (promptId === 'chatgpt' || promptId === 'chat' || promptId === 'gpt') {
+      promptId = 'default'
+    }
     const prompt = Prompt({
       chatId: ctx.chat.id,
       promptId: promptId,
@@ -31,7 +34,6 @@ const CustomCommands = (bot: any) => {
       ctx.reply(
         `Prompt set to ${prompt.promptId}\n\nYou are now chatting with ${name}! Say hi!`,
       )
-      console.log('this just ran :o')
     }
   })
 

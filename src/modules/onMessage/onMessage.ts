@@ -3,18 +3,20 @@ import { Message } from '../../types/chat'
 import CheckAccess from '../auth/checkAuthentication'
 import ChatAi from '../context/chat'
 import { message } from 'telegraf/filters'
+//import the bot type from Telegraf
+import { Telegraf } from 'telegraf'
 
 // From types/chat
 type Chat = {
-  chatId: number
+  // chatId: number
   screenName: string
   message: Message
-  temperature: number
-  promptId: string
-  prompt: string
+  // temperature: number
+  // promptId: string
+  // prompt: string
 }
 
-const OnMessage = (bot: any) => {
+const OnMessage = (bot: Telegraf) => {
   const CheckAccessMiddleware = (ctx: Context, next: () => any) => {
     CheckAccess(bot, ctx, next)
   }

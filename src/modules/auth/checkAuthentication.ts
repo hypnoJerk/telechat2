@@ -1,9 +1,6 @@
 import { Context, Telegraf } from 'telegraf'
 import FileUsers from './fileUser'
-import {
-  CallbackQuery,
-  InlineKeyboardMarkup,
-} from 'telegraf/typings/core/types/typegram'
+import { InlineKeyboardMarkup } from 'telegraf/typings/core/types/typegram'
 import { callbackQuery } from 'telegraf/filters'
 
 function createAccessRequestKeyboard(
@@ -32,7 +29,7 @@ const CheckAccess = async (bot: Telegraf, ctx: Context, next: () => any) => {
     return
   }
   const userId = ctx.from.id
-  let userExists = FileUsers().checkUser(userId.toString())
+  const userExists = FileUsers().checkUser(userId.toString())
   // console.log('userExists ', userExists)
   // console.log('userId ', userId.toString())
   if (userExists) {
