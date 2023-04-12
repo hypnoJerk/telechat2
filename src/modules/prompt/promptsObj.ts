@@ -328,7 +328,7 @@ const PromptsObj = (): Prompts => {
       name: 'TweetBot',
       screenName: 'TweetBot',
       color: '\x1b[33m',
-      hidden: true,
+      hidden: false,
       temperature: 0.6,
       description:
         'TweetBot is a assistant bot that can generate, analyze, or rewrite tweets',
