@@ -1,7 +1,7 @@
 const RequiredCommands = (bot: any) => {
   bot.start((ctx: any) =>
     ctx.reply(
-      `Hello, ${ctx.from.first_name}! This is a Telegram bot, \npowered by OpenAI's GPT-3, \nand developed by hypno. \n\nTo get started, type /help or use the /prompt command to set the prompt for the bot or just start chatting to chat with default ChatGPT. \n\nExamples:\n/prompt snoopdogg \n/p wizard\n/prompt default\n\nSee /list for available prompts.`,
+      `Hello, ${ctx.from.first_name}! This is a Telegram bot, \npowered by OpenAI's GPT-3.5, \nand developed by hypno. \n\nTo get started, type /help or use the /prompt command to set the prompt for the bot or just start chatting to chat with default ChatGPT. \n\nExamples:\n/prompt snoopdogg \n/p wizard\n/prompt default\n\nSee /list for available prompts.`,
     ),
   )
   bot.help((ctx: any) =>
