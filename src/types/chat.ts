@@ -22,6 +22,7 @@ type Chat = {
   temperature: number
   promptId?: string
   prompt?: string
+  promptLimit: number
 }
 
 export { Chat, Message, MessageList, MessageListInterface }

@@ -107,6 +107,7 @@ const ChatAi = async (props: ChatAIInterface) => {
     temperature: 0.5,
     promptId: 'default',
     prompt: 'You are a helpful assistant.',
+    promptLimit: 6,
   }
 
   const messagesObj: MessageList = chat.messages
@@ -141,6 +142,7 @@ const ChatAi = async (props: ChatAIInterface) => {
     timestamp: now.toFormat('yyyy-MM-dd HH:mm:ss'),
     chatId: chatId,
     prompt: chat.promptId,
+    promptLimit: chat.promptLimit,
     message: {
       type: 'input',
       text: {
@@ -182,14 +184,15 @@ const ChatAi = async (props: ChatAIInterface) => {
   // Remove the system message before saving to the database
   removeSystemMessageFromMessagesObj(chat.messages)
   // Remove the top history to keep the chat history to a reasonable size
-  removeTopHistoryFromMessagesObj(chat.messages, 6)
-
+  removeTopHistoryFromMessagesObj(chat.messages, chat.promptLimit)
+  // console.log('chat.ts - db.addMessage - chat.promptLimit: ', chat.promptLimit)
   db.addMessage({
     chatId: chat.chatId,
     messages: chat.messages,
     temperature: chat.temperature,
     promptId: chat.promptId || 'default',
     prompt: chat.prompt || 'You are a helpful assistant.',
+    promptLimit: chat.promptLimit,
   })
 
   const tokenizedResponse = encode(returnedChatMessage.content)

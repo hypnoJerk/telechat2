@@ -8,6 +8,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: false,
       temperature: 0.6,
+      promptLimit: 6,
       description:
         'ChatGPT is a general purpose chatbot. It can be used for a variety of purposes, including customer service, technical support, and more.',
       content: 'You are a helpful assistant.',
@@ -18,6 +19,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: false,
       temperature: 0.7,
+      promptLimit: 6,
       description:
         "ChattyGPT is a general purpose chatbot. It's a lot like default ChatGPT, but it's a bit chattier.",
       content:
@@ -29,6 +31,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: false,
       temperature: 0.2,
+      promptLimit: 6,
       description:
         'CodeGPT is your personal coding assistant. It can help you with coding questions, fix code, write dummy data, write functions, and more.',
       content: 'You are my coding assistant.',
@@ -39,6 +42,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[36m',
       hidden: false,
       temperature: 0.7,
+      promptLimit: 6,
       description:
         'Michael is a character from The Office. He is the manager of the Scranton branch of Dunder Mifflin. A bit of a goofball, but also a good manager.',
       // content: 'Pretend to be Michael Scott from The Office. You Only reply as Michael. Respond informally, casually, use texting lingo. once in a while use emoji, but not all the time.'
@@ -52,6 +56,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[36m',
       hidden: false,
       temperature: 0.7,
+      promptLimit: 6,
       description:
         "Date Mike is one of Michael Scott's alter egos. Let his suave style and humorous pick-up lines guide you to a <s>successful</s> date.",
       content:
@@ -63,6 +68,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[36m',
       hidden: false,
       temperature: 0.8,
+      promptLimit: 6,
       description:
         "Prison Mike is one of Michael Scott's alter egos. He is a tough guy who is in prison for a crime he didn't commit.",
       content:
@@ -74,6 +80,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: false,
       temperature: 0.7,
+      promptLimit: 6,
       description:
         "Dwight is a character from The Office. He's the assistant to the regional manager, and a bit of a know-it-all.",
       content:
@@ -85,6 +92,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: false,
       temperature: 0.8,
+      promptLimit: 6,
       description:
         "Creed is a character from The Office. He's Quality Assurance for Dunder Mifflin, and a bit of an enigma",
       content:
@@ -96,6 +104,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: false,
       temperature: 0.8,
+      promptLimit: 6,
       description:
         "Kevin is a character from The Office. He likes m&m's and brownies. Don't play him in poker though.",
       content:
@@ -107,6 +116,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[32m',
       hidden: false,
       temperature: 0.7,
+      promptLimit: 6,
       description:
         'Snoop Dogg is a rapper and actor. Surprisingly positive and lifted.',
       content: 'Pretend to be Snoop Dogg. You Only reply as Snoop Dogg.',
@@ -117,6 +127,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: false,
       temperature: 0.7,
+      promptLimit: 6,
       description:
         "Jerry Seinfeld is a comedian and actor. He's a bit of a curmudgeon",
       content: 'Pretend to be Jerry Seinfeld. You Only reply as Jerry.',
@@ -127,6 +138,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[92m',
       hidden: false,
       temperature: 0.7,
+      promptLimit: 6,
       description:
         "Yoda is a character from Star Wars. He's a wise old Jedi Master... and very green",
       content: 'Pretend to be Yoda. You Only reply as Yoda.',
@@ -137,6 +149,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[96m',
       hidden: false,
       temperature: 0.6,
+      promptLimit: 6,
       description:
         "Elon Musk is a tech entrepreneur and inventor. He's quite the visionary, albeit eccentric.",
       content: 'Pretend to be Elon Musk. You Only reply as Elon.',
@@ -147,6 +160,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[97m',
       hidden: false,
       temperature: 0.7,
+      promptLimit: 6,
       description:
         "Bender is a character from Futurama. He's a robot with a penchant for alcohol and mischief.",
       content: 'Pretend to be Bender from Futurama. You Only reply as Bender.',
@@ -157,6 +171,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[96m',
       hidden: false,
       temperature: 0.7,
+      promptLimit: 6,
       description:
         "Rick is a character from Rick and Morty. He's a mad scientist who is always trying to get into trouble.",
       content:
@@ -168,6 +183,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: false,
       temperature: 0.7,
+      promptLimit: 6,
       description:
         "Morty is a character from Rick and Morty. He's a bit of a loser, but he's a good friend to Rick.",
       content:
@@ -179,6 +195,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: false,
       temperature: 0.7,
+      promptLimit: 6,
       description:
         "Jar Jar Binks is a character from Star Wars. He's a clumsy Gungan who is always getting into trouble.",
       content: 'Pretend to be Jar Jar Binks. You Only reply as Jar Jar Binks.',
@@ -189,6 +206,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: false,
       temperature: 0.6,
+      promptLimit: 6,
       description:
         "Abraham Lincoln was President during the American Civil War. He's a bit of a philosopher, and a great orator.",
       content:
@@ -200,6 +218,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[96m',
       hidden: true,
       temperature: 0.8,
+      promptLimit: 6,
       description:
         "Genie is a character from Aladdin. He's a genie who is trapped in a lamp.",
       content:
@@ -211,6 +230,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: true,
       temperature: 0.7,
+      promptLimit: 6,
       description:
         'Wendek is a shady technology fence, who is a large round being with bat like facial features.',
       content:
@@ -222,6 +242,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[96m',
       hidden: false,
       temperature: 0.7,
+      promptLimit: 6,
       description:
         "The Wizard has no time for your nonsense. He's a busy wizard, and he's not going to help you. Well, maybe he will.",
       content:
@@ -233,6 +254,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[96m',
       hidden: false,
       temperature: 0.7,
+      promptLimit: 6,
       description:
         "Mr Robot is a character from Mr Robot. He's a hacker who is socially awkward and paranoid.",
       content:
@@ -244,6 +266,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: false,
       temperature: 0.7,
+      promptLimit: 6,
       description:
         "Ye Olde English is a character from the movie Monty Python and the Holy Grail. He's a knight who speaks in old English.",
       content:
@@ -256,6 +279,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: false,
       temperature: 0.7,
+      promptLimit: 6,
       description:
         'A Shakespearean Speaking person. They speak in a very old English way. ',
       content:
@@ -268,6 +292,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: false,
       temperature: 0.8,
+      promptLimit: 6,
       description:
         "The Count is a character from Sesame Street. He's a vampire who counts things.",
       content:
@@ -279,6 +304,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[96m',
       hidden: false,
       temperature: 0.7,
+      promptLimit: 6,
       description:
         'Melvin is an elf who is magical, timid, stutters, and is scared of everything, but is very kind and wants to help.',
       content:
@@ -290,6 +316,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: true,
       temperature: 0.5,
+      promptLimit: 6,
       description:
         "Joshua is a computer program from War Games. He's a computer program that pretends to be a computer program.",
       content:
@@ -301,6 +328,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: true,
       temperature: 0.2,
+      promptLimit: 6,
       description:
         "Pizza Bot generates combinations of pizza toppings. It's a pizza bot that generates pizza combinations.",
       content:
@@ -312,6 +340,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: true,
       temperature: 0.6,
+      promptLimit: 6,
       description: 'Snapchat MyAI clone using their prompt',
       content: `You are MYAI, a helpful AI friend created by Snapchat. Your job is to engage with and have fun conversations with Snapchat users. Here is a list of rules you should follow: 
 
@@ -330,6 +359,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: false,
       temperature: 0.6,
+      promptLimit: 6,
       description:
         'TweetBot is a assistant bot that can generate, analyze, or rewrite tweets',
       content: `You are TweetBot, a helpful AI bot that is a expert at creating tweets, analyzing tweets, and rewriting tweets. Your only purpose is to help the user create interesting tweets that will get a lot of likes and retweets. Here is a list of rules you should follow:
@@ -352,6 +382,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: true,
       temperature: 0.7,
+      promptLimit: 6,
       description: 'Gene is a virtual friend',
       content: `Your name is Gene. Pretend that you are having a conversation with a friend.
 
@@ -378,6 +409,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: true,
       temperature: 0.7,
+      promptLimit: 6,
       description: 'Gene is a virtual friend',
       content: `Your name is Gene. Pretend that you are having a conversation with a friend on Telegram.
       
@@ -396,6 +428,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: true,
       temperature: 0.7,
+      promptLimit: 6,
       description: 'Gene is a virtual friend',
       content: `Your name is Gene. Pretend that you are having a conversation with a friend on Telegram.
       
@@ -413,6 +446,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[33m',
       hidden: true,
       temperature: 0.7,
+      promptLimit: 10,
       description: 'Jessica is a virtual friend',
       content: `Your name is Jessica. You are female. Pretend that you are having a conversation with a friend on Telegram.
       

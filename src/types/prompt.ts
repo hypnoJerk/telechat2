@@ -6,6 +6,7 @@ interface Prompt {
   temperature: number
   description: string
   content: string
+  promptLimit: number
 }
 
 interface Prompts {

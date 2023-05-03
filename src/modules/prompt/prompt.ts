@@ -19,6 +19,11 @@ const Prompt = (props: PromptInterface) => {
         props.promptId,
         props.prompt,
         prompt.temperature,
+        prompt.promptLimit,
+      )
+      console.log(
+        'prompt/prompt.ts - setPrompt - prompt.promptLimit',
+        prompt.promptLimit,
       )
     } else {
       props.prompt =
