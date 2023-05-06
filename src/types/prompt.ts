@@ -2,6 +2,7 @@ interface Prompt {
   name: string
   screenName: string
   color: string
+  model: string
   hidden: boolean
   temperature: number
   description: string
