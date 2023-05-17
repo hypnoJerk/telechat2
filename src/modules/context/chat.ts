@@ -193,6 +193,7 @@ const ChatAi = async (props: ChatAIInterface) => {
     promptId: chat.promptId || 'default',
     prompt: chat.prompt || 'You are a helpful assistant.',
     promptLimit: chat.promptLimit,
+    model: chat.model,
   })
 
   const tokenizedResponse = encode(returnedChatMessage.content)

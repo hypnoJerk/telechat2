@@ -2,12 +2,12 @@ interface Prompt {
   name: string
   screenName: string
   color: string
-  model: string
   hidden: boolean
   temperature: number
   description: string
   content: string
   promptLimit: number
+  model: string
 }
 
 interface Prompts {

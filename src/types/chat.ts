@@ -21,6 +21,7 @@ type Chat = {
   promptId?: string
   prompt?: string
   promptLimit: number
+  model: string
 }
 
 export { Chat, Message, MessageList, MessageListInterface }

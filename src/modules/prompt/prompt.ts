@@ -20,6 +20,7 @@ const Prompt = (props: PromptInterface) => {
         props.prompt,
         prompt.temperature,
         prompt.promptLimit,
+        prompt.model,
       )
       console.log(
         'prompt/prompt.ts - setPrompt - prompt.promptLimit',

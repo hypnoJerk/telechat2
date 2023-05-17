@@ -8,6 +8,7 @@ interface DB_Interface {
   prompt: string
   temperature: number
   promptLimit: number
+  model: string
   error?: string
 }
 
@@ -18,6 +19,7 @@ interface DB_return_Interface {
   prompt: string
   temperature: number
   promptLimit: number
+  model: string
   error?: string
 }
 
@@ -26,7 +28,7 @@ const DB = () => {
   db.serialize(() => {
     // console.log('create table if not exists')
     db.run(
-      'CREATE TABLE IF NOT EXISTS chat (chatId INTEGER, messages TEXT, promptId TEXT, prompt TEXT, temperature REAL, promptLimit INTEGER)',
+      'CREATE TABLE IF NOT EXISTS chat (chatId INTEGER, messages TEXT, promptId TEXT, prompt TEXT, temperature REAL, promptLimit INTEGER, model TEXT)',
     )
   })
 
@@ -37,6 +39,7 @@ const DB = () => {
     prompt,
     temperature,
     promptLimit,
+    model,
   }: DB_Interface) {
     // console.log('context/db.ts - addMessage - promptLimit: ' + promptLimit)
     db.serialize(() => {
@@ -47,8 +50,8 @@ const DB = () => {
       // remove all entries from the table that match the chatId
       db.run('DELETE FROM chat WHERE chatId = ?', [chatId])
       db.run(
-        'INSERT INTO chat VALUES (?, ?, ?, ?, ?, ?)',
-        [chatId, strjson, promptId, prompt, temperature, promptLimit],
+        'INSERT INTO chat VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [chatId, strjson, promptId, prompt, temperature, promptLimit, model],
         (err) => {
           if (err) {
             const error = err.message
@@ -116,6 +119,7 @@ const DB = () => {
     prompt: string,
     temperature: number,
     promptLimit: number,
+    model: string,
   ) {
     const chat = await getMessages(chatId)
     if (!chat) {
@@ -128,13 +132,14 @@ const DB = () => {
         prompt,
         temperature,
         promptLimit,
+        model,
       }
       addMessage(newChat as DB_Interface)
     } else {
       db.serialize(() => {
         db.run(
-          'UPDATE chat SET promptId = ?, prompt = ?, MESSAGES = "", TEMPERATURE = ?, promptLimit = ?  WHERE chatId = ?',
-          [promptId, prompt, temperature, promptLimit, chatId],
+          'UPDATE chat SET promptId = ?, prompt = ?, MESSAGES = "", TEMPERATURE = ?, promptLimit = ?, model = ?  WHERE chatId = ?',
+          [promptId, prompt, temperature, promptLimit, model, chatId],
           (err) => {
             if (err) {
               const error = err.message
