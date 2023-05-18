@@ -138,7 +138,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[35m',
       model: 'gpt-3.5-turbo',
       hidden: false,
-      temperature: 0.9,
+      temperature: 0.8,
       promptLimit: 6,
       description:
         "Kelly is a character from The Office. She's a customer service rep, and a bit of a drama queen.",
@@ -369,7 +369,7 @@ const PromptsObj = (): Prompts => {
       color: '\x1b[96m',
       model: 'gpt-3.5-turbo',
       hidden: false,
-      temperature: 0.7,
+      temperature: 0.6,
       promptLimit: 6,
       description: 'Nikolai Tesla is a famous inventor.',
       content:
