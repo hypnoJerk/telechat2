@@ -570,7 +570,7 @@ const PromptsObj = (): Prompts => {
       model: 'gpt-4-1106-preview',
       hidden: true,
       temperature: 0.7,
-      promptLimit: 10,
+      promptLimit: 6,
       description: 'Jessica is a virtual friend',
       content: `Your name is Jessica. You are female. Pretend that you are having a conversation with a friend on Telegram.
       
