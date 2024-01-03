@@ -2,6 +2,7 @@
 import axios, { AxiosError } from 'axios'
 import AxiosRateLimit from 'axios-rate-limit'
 import { MessageList, Chat, Message } from '../../types/chat'
+import PromptsObj from '../prompt/promptsObj'
 // import logger from '../logger/logger'
 
 interface ChatAPIInterface {
@@ -32,8 +33,15 @@ const API = async () => {
     }
     let messages: Message[]
 
+    // get model from promptsObj based on promptId
+
+    const promptsObj = PromptsObj()
+
+    promptsObj['jessica'].model
+
     const requestData = {
-      model: 'gpt-3.5-turbo',
+      // model: 'gpt-3.5-turbo',
+      model: data.model,
       messages: data.messages?.messages,
       temperature: data.temperature,
       user: data.chatId.toString(),

@@ -1,5 +1,3 @@
-import exp from 'constants'
-
 type Message = {
   role: string
   content: string
@@ -22,6 +20,8 @@ type Chat = {
   temperature: number
   promptId?: string
   prompt?: string
+  promptLimit: number
+  model: string
 }
 
 export { Chat, Message, MessageList, MessageListInterface }

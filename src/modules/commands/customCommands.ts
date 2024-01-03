@@ -128,6 +128,33 @@ const CustomCommands = (bot: any) => {
       )
     }
   })
+
+  // custom prompt module
+  // User can create a custom prompt and save it to the prompt in the db
+
+  bot.command('custom', CheckAccessMiddleware, (ctx: any) => {
+    const args = ctx.update.message.text.split(' ')
+    const customPrompt = args.slice(1).join(' ')
+
+    if (args.length > 1) {
+      if(customPrompt){
+        if(customPrompt.length > 1000) {
+          ctx.reply('Custom prompt is too long. Please keep it under 1000 characters.')
+          return
+        } else {
+          const prompt = Prompt({
+            chatId: ctx.chat.id,
+            promptId: 'custom',
+            prompt: customPrompt,
+          }).setPrompt()
+          ctx.reply('Custom prompt set to ' + prompt.promptId + '. Say hi!')
+        }
+      } else {
+        ctx.reply('Please provide a custom prompt.')
+      }
+    }
+  })
+    
 }
 
 export default CustomCommands

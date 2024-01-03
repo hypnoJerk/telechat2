@@ -10,8 +10,28 @@ const Prompt = (props: PromptInterface) => {
   function setPrompt() {
     const db = DB()
     const promptObj = PromptsObj()
-    const prompt = promptObj[props.promptId]
 
+    let prompt = promptObj.default
+
+    // if custom
+    if (props.promptId === 'custom') {
+      prompt = {
+        name: 'custom',
+        screenName: 'custom',
+        color: '\x1b[33m',
+        model: 'gpt-3.5-turbo',
+        hidden: true,
+        temperature: 0.7,
+        promptLimit: 6,
+        description: 'custom prompt',
+        content: props.prompt ?? '',
+      }
+    } else {
+      prompt = promptObj[props.promptId]
+    }
+
+
+    
     if (prompt) {
       props.prompt = prompt.content
       db.setPrompt(
@@ -19,6 +39,12 @@ const Prompt = (props: PromptInterface) => {
         props.promptId,
         props.prompt,
         prompt.temperature,
+        prompt.promptLimit,
+        prompt.model,
+      )
+      console.log(
+        'prompt/prompt.ts - setPrompt - prompt.promptLimit',
+        prompt.promptLimit,
       )
     } else {
       props.prompt =
