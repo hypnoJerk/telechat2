@@ -133,17 +133,32 @@ const CustomCommands = (bot: any) => {
   // User can create a custom prompt and save it to the prompt in the db
 
   bot.command('custom', CheckAccessMiddleware, (ctx: any) => {
-    const args = ctx.update.message.text.split(' ')
-    const customPrompt = args.slice(1).join(' ')
+    let args = ctx.update.message.text.split(' ')
+    // const customPrompt = args.slice(1).join(' ')
+    let hasArgument = false
+    let gptNumber
+    console.log('args: ', args[1])
+    if (/^-\d+/.test(args[1])) {
+      gptNumber = args[1].replace('-', '')
+      args = args.slice(1)
+      hasArgument = true
+      console.log('isNegativeFourPresent?: ', hasArgument)
+      console.log('Argument: ', gptNumber)
+    }
+    const customPrompt = args.join(' ')
 
     if (args.length > 1) {
-      if(customPrompt){
-        if(customPrompt.length > 1000) {
-          ctx.reply('Custom prompt is too long. Please keep it under 1000 characters.')
+      if (customPrompt) {
+        if (customPrompt.length > 1000) {
+          ctx.reply(
+            'Custom prompt is too long. Please keep it under 1000 characters.',
+          )
           return
         } else {
+          console.log('hasArgument ', hasArgument)
           const prompt = Prompt({
             chatId: ctx.chat.id,
+            model: hasArgument ? gptNumber : undefined,
             promptId: 'custom',
             prompt: customPrompt,
           }).setPrompt()
@@ -154,7 +169,6 @@ const CustomCommands = (bot: any) => {
       }
     }
   })
-    
 }
 
 export default CustomCommands

@@ -2,6 +2,7 @@ import PromptsObj from '../prompt/promptsObj'
 import DB from '../context/db'
 interface PromptInterface {
   chatId: number
+  model?: string
   promptId: string
   prompt?: string
 }
@@ -12,14 +13,69 @@ const Prompt = (props: PromptInterface) => {
     const promptObj = PromptsObj()
 
     let prompt = promptObj.default
+    let model = 'gpt-3.5-turbo'
+
+    //create list of gpt versions
+    const gptVersions = [
+      'gpt-3.5-turbo',
+      'gpt-3.5-turbo-0613',
+      'gpt-3.5-turbo-1106',
+      'gpt-3.5-turbo-0125',
+      'gpt-4',
+      'gpt-4-turbo-preview',
+      'gpt-4-1106-preview',
+      'gpt-4-0125-preview',
+    ]
+    if (props.model) {
+      console.log('if props.model true ', props.model)
+      switch (props.model) {
+        case '3.5':
+          // code for gpt-3.5-turbo
+          model = gptVersions[0]
+          break
+        case '3.5.2':
+          // code for gpt-3.5-turbo-0613
+          model = gptVersions[1]
+          break
+        case '3.5.3':
+          // code for gpt-3.5-turbo-1106
+          model = gptVersions[2]
+          break
+        case '3.5.4':
+          // code for gpt-3.5-turbo-0125
+          model = gptVersions[3]
+          console.log('set model', model)
+          break
+        case '4':
+          // code for gpt-4
+          model = gptVersions[4]
+          break
+        case '4.1':
+          // code for gpt-4-turbo-preview
+          model = gptVersions[5]
+          break
+        case '4.2':
+          // code for gpt-4-1106-preview
+          model = gptVersions[6]
+          break
+        case '4.3':
+          model = gptVersions[7]
+          break
+        default:
+          // code for other models
+          model = gptVersions[0]
+          break
+      }
+    }
 
     // if custom
     if (props.promptId === 'custom') {
+      console.log('Model: ', model)
       prompt = {
         name: 'custom',
         screenName: 'custom',
         color: '\x1b[33m',
-        model: 'gpt-3.5-turbo',
+        model: model,
         hidden: true,
         temperature: 0.7,
         promptLimit: 6,
@@ -30,8 +86,6 @@ const Prompt = (props: PromptInterface) => {
       prompt = promptObj[props.promptId]
     }
 
-
-    
     if (prompt) {
       props.prompt = prompt.content
       db.setPrompt(
