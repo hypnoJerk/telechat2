@@ -24,7 +24,7 @@ TELE_CHAT_ID= "your chat id here"
 
 ```
 
-4. Create a file called users.txt and add the telegram user ids of the users you want to allow to use the bot
+4. Create a file called users.txt and add the telegram user ids of the users you want to allow to use the bot (will use database in the future)
 
 ```txt
 # Path: users.txt
@@ -36,7 +36,19 @@ TELE_CHAT_ID= "your chat id here"
 333333333333
 ```
 
-5. Run the bot
+5. Install the dependencies
+
+```bash
+yarn install
+```
+
+6. Build the project with typescript TSC. The output should be in the dist directory
+
+```bash
+tsc
+```
+
+7. Run the bot
 
 ```bash
 node index.js
