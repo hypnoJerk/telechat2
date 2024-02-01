@@ -132,20 +132,52 @@ const CustomCommands = (bot: any) => {
   // custom prompt module
   // User can create a custom prompt and save it to the prompt in the db
 
+  // Create type to be used with argValues
+  type ArgValues = {
+    [key: string]: string
+  }
+
   bot.command('custom', CheckAccessMiddleware, (ctx: any) => {
+    let hasArgument = false
     const args = ctx.update.message.text.split(' ')
-    const customPrompt = args.slice(1).join(' ')
+    const validArgs = ['v', 't', 'l'] // list of valid arguments
+    const argValues: ArgValues = {}
+
+    for (let i = 1; i < args.length; i++) {
+      if (args[i].startsWith('-') && validArgs.includes(args[i].substring(1))) {
+        hasArgument = true
+        const arg = args[i].substring(1)
+        const value = args[i + 1]
+        argValues[arg] = value
+        // Remove the argument and its value from args
+        args.splice(i, 2)
+        // i++ // skip next value as it is already processed
+        i-- // Adjust index after splicing
+      }
+    }
+    console.log('Arguments: ', argValues)
+
+    // Remove the command from args
+    args.shift()
+
+    const customPrompt = args.join(' ')
 
     if (args.length > 1) {
-      if(customPrompt){
-        if(customPrompt.length > 1000) {
-          ctx.reply('Custom prompt is too long. Please keep it under 1000 characters.')
+      if (customPrompt) {
+        if (customPrompt.length > 1000) {
+          ctx.reply(
+            'Custom prompt is too long. Please keep it under 1000 characters.',
+          )
           return
         } else {
+          console.log('hasArgument ', hasArgument)
           const prompt = Prompt({
             chatId: ctx.chat.id,
+            limit: hasArgument ? parseInt(argValues['l']) : undefined,
+            model: hasArgument ? argValues['v'] : undefined,
             promptId: 'custom',
             prompt: customPrompt,
+            temperature: hasArgument ? parseFloat(argValues['t']) : undefined,
           }).setPrompt()
           ctx.reply('Custom prompt set to ' + prompt.promptId + '. Say hi!')
         }
@@ -154,7 +186,6 @@ const CustomCommands = (bot: any) => {
       }
     }
   })
-    
 }
 
 export default CustomCommands
