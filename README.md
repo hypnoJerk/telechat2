@@ -6,9 +6,21 @@ This is a telegram bot that uses the GPT-3.5 & GPT-4 API to generate text. It is
 
 ## How to use
 
-1. Create a telegram bot and get the token
-2. Create a GPT-3 API key
-3. Create a .env file and add the following variables
+1. Install the dependencies
+
+```bash
+yarn install
+```
+
+2. Build the project with typescript TSC. The output should be in the dist directory
+
+```bash
+tsc
+```
+
+3. Create a telegram bot and get the token
+4. Create an API key from [OpenAI](https://platform.openai.com/api-keys)
+5. Create a .env file and add the following variables
 
 ```bash
 
@@ -24,7 +36,7 @@ TELE_CHAT_ID= "your chat id here"
 
 ```
 
-4. Create a file called users.txt and add the telegram user ids of the users you want to allow to use the bot (will use database in the future)
+6. Create a file called users.txt and add the telegram user ids of the users you want to allow to use the bot (will use database in the future)
 
 ```txt
 # Path: users.txt
@@ -34,18 +46,6 @@ TELE_CHAT_ID= "your chat id here"
 111111111111
 222222222222
 333333333333
-```
-
-5. Install the dependencies
-
-```bash
-yarn install
-```
-
-6. Build the project with typescript TSC. The output should be in the dist directory
-
-```bash
-tsc
 ```
 
 7. Run the bot
