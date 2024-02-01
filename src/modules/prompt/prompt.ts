@@ -106,10 +106,10 @@ const Prompt = (props: PromptInterface) => {
         prompt.promptLimit,
         prompt.model,
       )
-      console.log(
-        'prompt/prompt.ts - setPrompt - prompt.promptLimit',
-        prompt.promptLimit,
-      )
+      // console.log(
+      //   'prompt/prompt.ts - setPrompt - prompt.promptLimit',
+      //   prompt.promptLimit,
+      // )
     } else {
       props.prompt =
         'Please enter a valid prompt argument.\n\n Example:\n /prompt snoopdogg \n\nTo see a list of available prompts use the /list command.'
