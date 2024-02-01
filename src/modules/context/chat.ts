@@ -143,6 +143,8 @@ const ChatAi = async (props: ChatAIInterface) => {
     chatId: chatId,
     prompt: chat.promptId,
     promptLimit: chat.promptLimit,
+    promptTemperature: chat.temperature,
+    promptModel: chat.model,
     message: {
       type: 'input',
       text: {

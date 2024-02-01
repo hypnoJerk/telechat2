@@ -2,9 +2,11 @@ import PromptsObj from '../prompt/promptsObj'
 import DB from '../context/db'
 interface PromptInterface {
   chatId: number
-  model?: string
+  limit?: number | undefined
+  model?: string | undefined
   promptId: string
   prompt?: string
+  temperature?: number | undefined
 }
 
 const Prompt = (props: PromptInterface) => {
@@ -71,14 +73,22 @@ const Prompt = (props: PromptInterface) => {
     // if custom
     if (props.promptId === 'custom') {
       console.log('Model: ', model)
+      console.log('temperature: ', props.temperature)
+      console.log('limit: ', props.limit)
       prompt = {
         name: 'custom',
         screenName: 'custom',
         color: '\x1b[33m',
         model: model,
         hidden: true,
-        temperature: 0.7,
-        promptLimit: 6,
+        temperature:
+          typeof props.temperature === 'number' && !isNaN(props.temperature)
+            ? props.temperature
+            : 0.7,
+        promptLimit:
+          typeof props.limit === 'number' && !isNaN(props.limit)
+            ? props.limit
+            : 6,
         description: 'custom prompt',
         content: props.prompt ?? '',
       }
