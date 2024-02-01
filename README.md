@@ -2,7 +2,7 @@
 
 # Telegram Bot
 
-This is a telegram bot that uses the GPT-3 API to generate text. It is a work in progress.
+This is a telegram bot that uses the GPT-3.5 & GPT-4 API to generate text. It is a work in progress.
 
 ## How to use
 
