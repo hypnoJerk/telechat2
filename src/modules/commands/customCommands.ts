@@ -2,6 +2,7 @@ import Context from 'telegraf/typings/context'
 import Prompt from '../../modules/prompt/prompt'
 import PromptsObj from '../prompt/promptsObj'
 import CheckAccess from '../auth/checkAuthentication'
+import { argv } from 'process'
 // import { message } from 'telegraf/filters'
 
 const CustomCommands = (bot: any) => {
@@ -179,7 +180,21 @@ const CustomCommands = (bot: any) => {
             prompt: customPrompt,
             temperature: hasArgument ? parseFloat(argValues['t']) : undefined,
           }).setPrompt()
-          ctx.reply('Custom prompt set to ' + prompt.promptId + '. Say hi!')
+          if (hasArgument) {
+            ctx.reply(
+              'Custom prompt set to ' +
+                prompt.promptId +
+                '. limit: ' +
+                argValues['l'] +
+                '. temperature: ' +
+                argValues['t'] +
+                '. model: ' +
+                argValues['v'] +
+                '. Say hi!',
+            )
+          } else {
+            ctx.reply('Custom prompt set to ' + prompt.promptId + '. Say hi!')
+          }
         }
       } else {
         ctx.reply('Please provide a custom prompt.')
