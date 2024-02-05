@@ -49,10 +49,9 @@ const OnMessage = (bot: Telegraf) => {
 
     ctx.reply('I received a photo with the caption: ' + caption)
 
-    // get file url
     const file = await bot.telegram.getFileLink(photo.file_id)
-    console.log('file: ', file.href)
-    console.log('caption: ', caption)
+    // console.log('file: ', file.href)
+    // console.log('caption: ', caption)
     const chatRequest = {
       chatId: ctx.chat.id,
       message: {
@@ -73,7 +72,9 @@ const OnMessage = (bot: Telegraf) => {
       },
     }
     const chatReply: Chat = await ChatAi(chatRequest)
-    ctx.reply(chatReply.message.content)
+    ctx.reply(chatReply.message.content, {
+      parse_mode: 'HTML',
+    })
   })
 }
 

@@ -33,4 +33,4 @@ type Chat = {
   model: string
 }
 
-export { Chat, Message, MessageList, MessageListInterface }
+export { Chat, Content, Message, MessageList, MessageListInterface }

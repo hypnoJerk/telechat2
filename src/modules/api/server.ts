@@ -48,6 +48,35 @@ const API = async () => {
     }
     // console.log('requestData: ', requestData)
     // console.log('messages: ', data.messages?.messages)
+
+    // / if any messages in data has an image, send to vision model
+    // const model = data.model
+    if (data.messages?.messages) {
+      // check if message.content is an array
+      const lastMessage =
+        data.messages?.messages[data.messages?.messages.length - 1]
+      logger.info({
+        chatId: data.chatId.toString(),
+        lastMessage: lastMessage,
+      })
+      console.log('lastMessage: ', lastMessage)
+      if (Array.isArray(lastMessage?.content)) {
+        const lastContent = lastMessage.content[lastMessage.content.length - 1]
+        logger.info({
+          chatId: data.chatId.toString(),
+          lastContent: lastContent,
+        })
+        console.log('lastContent: ', lastContent)
+        if (lastContent.type === 'image_url') {
+          logger.info({
+            chatId: data.chatId.toString(),
+            lastContentType: lastContent.type,
+          })
+          console.log('lastContent.type: ', lastContent.type)
+          requestData.model = 'gpt-4-vision-preview'
+        }
+      }
+    }
     try {
       const response = await api
         .post(apiUrl, requestData, {
@@ -60,8 +89,10 @@ const API = async () => {
           const promptId = data.promptId // Ensure promptId is defined
           if (promptId === undefined) {
             throw new Error('Prompt ID is not defined')
+          } else if (response.data.model === 'gpt-4-vision-preview') {
+            response.data.model = promptsObj[promptId].model
+            console.log('response.data.model: ', response.data.model)
           }
-          response.data.model = promptsObj[promptId].model
           return response
         })
       return response

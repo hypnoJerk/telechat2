@@ -1,4 +1,4 @@
-import { MessageList, Chat, Message } from '../../types/chat'
+import { MessageList, Chat, Message, Content } from '../../types/chat'
 import { API } from '../../modules/api/server'
 import DB from '../../modules/context/db'
 import CodeBlocksParse from '../parse/codeBlocksParse'
@@ -49,7 +49,7 @@ const createInitialMessagesObj = (): MessageList => ({
 
 const addUserMessageToMessagesObj = (
   messagesObj: MessageList,
-  userMessageContent: string,
+  userMessageContent: Content,
 ): void => {
   messagesObj.messages.push({
     role: 'user',
@@ -114,7 +114,7 @@ const ChatAi = async (props: ChatAIInterface) => {
     ? JSON.parse(chat.messages.toString())
     : createInitialMessagesObj()
 
-  addUserMessageToMessagesObj(messagesObj, message.content.toString()) // Ensure message.content is of type string
+  addUserMessageToMessagesObj(messagesObj, message.content as Content)
 
   // Prepend the system message before sending to the chat API
   prependSystemMessageToMessagesObj(messagesObj, chat.prompt)
@@ -189,6 +189,15 @@ const ChatAi = async (props: ChatAIInterface) => {
   // Remove the top history to keep the chat history to a reasonable size
   removeTopHistoryFromMessagesObj(chat.messages, chat.promptLimit)
   // console.log('chat.ts - db.addMessage - chat.promptLimit: ', chat.promptLimit)
+  db.addMessage({
+    chatId: chat.chatId,
+    messages: chat.messages,
+    temperature: chat.temperature,
+    promptId: chat.promptId || 'default',
+    prompt: chat.prompt || 'You are a helpful assistant.',
+    promptLimit: chat.promptLimit,
+    model: chat.model,
+  })
   const tokenizedResponse = encode(returnedChatMessage.content.toString())
   const responseCost = calculateMessageCost(tokenizedResponse.length)
   logger.info({
