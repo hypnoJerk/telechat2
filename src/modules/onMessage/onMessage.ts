@@ -17,12 +17,16 @@ type Chat = {
 }
 
 const OnMessage = (bot: Telegraf) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const CheckAccessMiddleware = (ctx: Context, next: () => any) => {
     CheckAccess(bot, ctx, next)
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   bot.on(message('text'), CheckAccessMiddleware, async (ctx: any) => {
     if (ctx.message.text.length > 4096) {
-      ctx.reply('Your message exceeds the character limit of 4,096 characters. I may not be able to respond properly. Please shorten your message and try again, or use chat.openai.com directly.')
+      ctx.reply(
+        'Your message exceeds the character limit of 4,096 characters. I may not be able to respond properly. Please shorten your message and try again, or use chat.openai.com directly.',
+      )
       return
     }
     const chatRequest = {
