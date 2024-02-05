@@ -1,6 +1,15 @@
 type Message = {
   role: string
-  content: string
+  content: string | Content | Content[]
+}
+
+type Content = {
+  type: string
+  text?: string
+  image_url?: {
+    url: string
+    detail: string
+  }
 }
 
 type MessageList = {

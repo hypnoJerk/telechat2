@@ -41,6 +41,40 @@ const OnMessage = (bot: Telegraf) => {
       parse_mode: 'HTML',
     })
   })
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  bot.on(message('photo'), CheckAccessMiddleware, async (ctx: any) => {
+    const photo = ctx.message.photo[ctx.message.photo.length - 1]
+    const caption = ctx.message.caption || ''
+
+    ctx.reply('I received a photo with the caption: ' + caption)
+
+    // get file url
+    const file = await bot.telegram.getFileLink(photo.file_id)
+    console.log('file: ', file.href)
+    console.log('caption: ', caption)
+    const chatRequest = {
+      chatId: ctx.chat.id,
+      message: {
+        role: 'user',
+        content: [
+          {
+            type: 'text',
+            text: caption,
+          },
+          {
+            type: 'image_url',
+            image_url: {
+              url: file.href,
+              detail: 'low',
+            },
+          },
+        ],
+      },
+    }
+    const chatReply: Chat = await ChatAi(chatRequest)
+    ctx.reply(chatReply.message.content)
+  })
 }
 
 export default OnMessage
