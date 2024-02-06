@@ -47,7 +47,8 @@ const OnMessage = (bot: Telegraf) => {
     const photo = ctx.message.photo[ctx.message.photo.length - 1]
     const caption = ctx.message.caption || ''
 
-    ctx.reply('I received a photo with the caption: ' + caption)
+    // ctx.reply('I received a photo with the text: ' + caption)
+    ctx.reply('One moment while I process the photo...')
 
     const file = await bot.telegram.getFileLink(photo.file_id)
     // console.log('file: ', file.href)
