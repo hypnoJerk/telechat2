@@ -45,7 +45,7 @@ const API = async () => {
       messages: data.messages?.messages,
       temperature: data.temperature,
       user: data.chatId.toString(),
-      max_tokens: 300,
+      max_tokens: 2000,
     }
     // console.log('requestData: ', requestData)
     // console.log('messages: ', data.messages?.messages)
@@ -75,6 +75,7 @@ const API = async () => {
           })
           console.log('lastContent.type: ', lastContent.type)
           requestData.model = 'gpt-4-vision-preview'
+          requestData.max_tokens = 500
         }
       }
     }
