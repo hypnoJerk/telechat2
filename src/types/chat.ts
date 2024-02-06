@@ -1,6 +1,15 @@
 type Message = {
   role: string
-  content: string
+  content: string | Content | Content[]
+}
+
+type Content = {
+  type: string
+  text?: string
+  image_url?: {
+    url: string
+    detail: string
+  }
 }
 
 type MessageList = {
@@ -24,4 +33,4 @@ type Chat = {
   model: string
 }
 
-export { Chat, Message, MessageList, MessageListInterface }
+export { Chat, Content, Message, MessageList, MessageListInterface }
