@@ -45,6 +45,7 @@ const API = async () => {
       messages: data.messages?.messages,
       temperature: data.temperature,
       user: data.chatId.toString(),
+      max_tokens: 300,
     }
     // console.log('requestData: ', requestData)
     // console.log('messages: ', data.messages?.messages)
