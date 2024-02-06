@@ -189,9 +189,36 @@ const ChatAi = async (props: ChatAIInterface) => {
   // Remove the top history to keep the chat history to a reasonable size
   removeTopHistoryFromMessagesObj(chat.messages, chat.promptLimit)
   // console.log('chat.ts - db.addMessage - chat.promptLimit: ', chat.promptLimit)
+
+  // Create a function that parses the messages and changes the image_url to a text placeholder
+  function transformMessages(messagesList: MessageList): MessageList {
+    const transformedMessages: Message[] = messagesList.messages.map(
+      (message) => {
+        // Check if content is an array and needs transformation
+        if (Array.isArray(message.content)) {
+          // Map over the content array to transform image_url objects
+          const transformedContent: Content[] = message.content.map(
+            (contentItem) => {
+              if (contentItem.type === 'image_url') {
+                // Change type to 'text' and replace image_url with a placeholder text
+                return { type: 'text', text: 'image placeholder here' }
+              }
+              return contentItem
+            },
+          )
+          return { ...message, content: transformedContent }
+        }
+        // Return the message unmodified if it doesn't meet the criteria
+        return message
+      },
+    )
+
+    return { messages: transformedMessages }
+  }
+  const parsedMessages = transformMessages(chat.messages)
   db.addMessage({
     chatId: chat.chatId,
-    messages: chat.messages,
+    messages: parsedMessages,
     temperature: chat.temperature,
     promptId: chat.promptId || 'default',
     prompt: chat.prompt || 'You are a helpful assistant.',
