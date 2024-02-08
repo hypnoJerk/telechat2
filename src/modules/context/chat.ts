@@ -1,4 +1,4 @@
-import { MessageList, Chat, Message } from '../../types/chat'
+import { MessageList, Chat, Message, Content } from '../../types/chat'
 import { API } from '../../modules/api/server'
 import DB from '../../modules/context/db'
 import CodeBlocksParse from '../parse/codeBlocksParse'
@@ -49,7 +49,7 @@ const createInitialMessagesObj = (): MessageList => ({
 
 const addUserMessageToMessagesObj = (
   messagesObj: MessageList,
-  userMessageContent: string,
+  userMessageContent: Content,
 ): void => {
   messagesObj.messages.push({
     role: 'user',
@@ -114,7 +114,7 @@ const ChatAi = async (props: ChatAIInterface) => {
     ? JSON.parse(chat.messages.toString())
     : createInitialMessagesObj()
 
-  addUserMessageToMessagesObj(messagesObj, message.content)
+  addUserMessageToMessagesObj(messagesObj, message.content as Content)
 
   // Prepend the system message before sending to the chat API
   prependSystemMessageToMessagesObj(messagesObj, chat.prompt)
@@ -148,7 +148,8 @@ const ChatAi = async (props: ChatAIInterface) => {
     message: {
       type: 'input',
       text: {
-        chars_original: message.content.length,
+        chars_original:
+          typeof message.content === 'string' ? message.content.length : 0,
         chars: allMessage.length,
         token: tokenizedRequest.length,
         cost: requestCost,
@@ -180,7 +181,7 @@ const ChatAi = async (props: ChatAIInterface) => {
 
   addAssistantMessageToMessagesObj(
     chat.messages,
-    returnedChat.choices[0].message.content,
+    returnedChat.choices[0].message.content.toString(),
   )
 
   // Remove the system message before saving to the database
@@ -188,17 +189,43 @@ const ChatAi = async (props: ChatAIInterface) => {
   // Remove the top history to keep the chat history to a reasonable size
   removeTopHistoryFromMessagesObj(chat.messages, chat.promptLimit)
   // console.log('chat.ts - db.addMessage - chat.promptLimit: ', chat.promptLimit)
+
+  // Create a function that parses the messages and changes the image_url to a text placeholder
+  function transformMessages(messagesList: MessageList): MessageList {
+    const transformedMessages: Message[] = messagesList.messages.map(
+      (message) => {
+        // Check if content is an array and needs transformation
+        if (Array.isArray(message.content)) {
+          // Map over the content array to transform image_url objects
+          const transformedContent: Content[] = message.content.map(
+            (contentItem) => {
+              if (contentItem.type === 'image_url') {
+                // Change type to 'text' and replace image_url with a placeholder text
+                return { type: 'text', text: 'image placeholder here' }
+              }
+              return contentItem
+            },
+          )
+          return { ...message, content: transformedContent }
+        }
+        // Return the message unmodified if it doesn't meet the criteria
+        return message
+      },
+    )
+
+    return { messages: transformedMessages }
+  }
+  const parsedMessages = transformMessages(chat.messages)
   db.addMessage({
     chatId: chat.chatId,
-    messages: chat.messages,
+    messages: parsedMessages,
     temperature: chat.temperature,
     promptId: chat.promptId || 'default',
     prompt: chat.prompt || 'You are a helpful assistant.',
     promptLimit: chat.promptLimit,
     model: chat.model,
   })
-
-  const tokenizedResponse = encode(returnedChatMessage.content)
+  const tokenizedResponse = encode(returnedChatMessage.content.toString())
   const responseCost = calculateMessageCost(tokenizedResponse.length)
   logger.info({
     timestamp: now.toFormat('yyyy-MM-dd HH:mm:ss'),
@@ -207,8 +234,14 @@ const ChatAi = async (props: ChatAIInterface) => {
     message: {
       type: 'output',
       text: {
-        chars_original: returnedChatMessage.content.length,
-        chars: returnedChatMessage.content.length,
+        chars_original:
+          typeof returnedChatMessage.content === 'string'
+            ? returnedChatMessage.content.length
+            : 0,
+        chars:
+          typeof returnedChatMessage.content === 'string'
+            ? returnedChatMessage.content.length
+            : 0,
         token: tokenizedResponse.length,
         cost: responseCost,
       },
@@ -216,7 +249,7 @@ const ChatAi = async (props: ChatAIInterface) => {
   })
 
   // Modify the returnedChat object to include the parsed message
-  const parsedMessage = CodeBlocksParse(returnedChatMessage.content)
+  const parsedMessage = CodeBlocksParse(returnedChatMessage.content.toString())
   const parsedReturnedChat = {
     ...returnedChat,
     message: {
