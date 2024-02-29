@@ -73,6 +73,8 @@ const API = async () => {
             chatId: data.chatId.toString(),
             lastContentType: lastContent.type,
           })
+          // only include last message, remove all other messages
+          requestData.messages = [lastMessage]
           console.log('lastContent.type: ', lastContent.type)
           requestData.model = 'gpt-4-vision-preview'
           requestData.max_tokens = 500
