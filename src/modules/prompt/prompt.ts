@@ -27,6 +27,7 @@ const Prompt = (props: PromptInterface) => {
       'gpt-4-turbo-preview',
       'gpt-4-1106-preview',
       'gpt-4-0125-preview',
+      'gpt-4o',
     ]
     if (props.model) {
       console.log('if props.model true ', props.model)
@@ -62,6 +63,9 @@ const Prompt = (props: PromptInterface) => {
           break
         case '4.3':
           model = gptVersions[7]
+          break
+        case '4o':
+          model = gptVersions[8]
           break
         default:
           // code for other models
