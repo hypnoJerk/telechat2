@@ -28,6 +28,7 @@ const Prompt = (props: PromptInterface) => {
       'gpt-4-1106-preview',
       'gpt-4-0125-preview',
       'gpt-4o',
+      'gpt-4o-mini',
     ]
     if (props.model) {
       console.log('if props.model true ', props.model)
@@ -67,9 +68,12 @@ const Prompt = (props: PromptInterface) => {
         case '4o':
           model = gptVersions[8]
           break
+        case '4o-mini':
+          model = gptVersions[9]
+          break
         default:
           // code for other models
-          model = gptVersions[0]
+          model = gptVersions[9]
           break
       }
     }
