@@ -1,6 +1,7 @@
 import { MessageList, Chat, Message, Content } from '../../types/chat'
 import { API } from '../../modules/api/server'
 import DB from '../../modules/context/db'
+// import Memory from './db-memory'
 import CodeBlocksParse from '../parse/codeBlocksParse'
 import PromptsObj from '../prompt/promptsObj'
 import logger from '../logger/logger'
@@ -8,6 +9,7 @@ import { encode } from 'gpt-3-encoder'
 import { DateTime } from 'luxon'
 
 const now = DateTime.local()
+// const memory = Memory()
 
 interface ChatAIInterface {
   chatId: number
@@ -108,6 +110,7 @@ const ChatAi = async (props: ChatAIInterface) => {
     promptId: 'default',
     prompt: 'You are a helpful assistant.',
     promptLimit: 6,
+    model: 'gpt-4o-mini',
   }
 
   const messagesObj: MessageList = chat.messages
@@ -119,7 +122,125 @@ const ChatAi = async (props: ChatAIInterface) => {
   // Prepend the system message before sending to the chat API
   prependSystemMessageToMessagesObj(messagesObj, chat.prompt)
 
+  // add tools and tool_choice to the chat object
+  const tools = [
+    {
+      type: 'function',
+      function: {
+        name: 'get_time',
+        description: 'Get the current time.',
+        parameters: {
+          type: 'object',
+          properties: {},
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'add_new_memory',
+        description:
+          'Add a new note or piece of information to your memory via a DB.',
+        parameters: {
+          type: 'object',
+          properties: {
+            memory: {
+              type: 'string',
+              description:
+                'The note or piece of information about the user to add to your memory.',
+            },
+          },
+          required: ['memory'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_memory',
+        description:
+          'Retrieve all notes or pieces of information about the user from memory.',
+        parameters: {
+          type: 'object',
+          properties: {},
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'add_to_profile',
+        description:
+          'Add or change information about the user in their profile.',
+        parameters: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'The name of the user.',
+            },
+            nickname: {
+              type: 'string',
+              description: 'The nickname of the user.',
+            },
+            s: {
+              type: 'string',
+            },
+            pronouns: {
+              type: 'string',
+              description: 'The pronouns of the user.',
+            },
+            age: {
+              type: 'number',
+              description: 'The age of the user.',
+            },
+            location: {
+              type: 'string',
+              description: 'The location of the user.',
+            },
+          },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_profile',
+        description:
+          'Retrieve all information about the user from their profile.',
+        parameters: {
+          type: 'object',
+          properties: {},
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'delete_profile',
+        description:
+          'Delete all information about the user from their profile.',
+        parameters: {
+          type: 'object',
+          properties: {},
+        },
+      },
+    },
+  ]
+
   chat.messages = messagesObj
+  chat.tools = tools
+  chat.tool_choice = 'auto'
+
+  function toolsAddReturnedChatMessage(
+    returnedChat: ReturnedChat,
+    message: string,
+  ) {
+    if (returnedChat) {
+      addAssistantMessageToMessagesObj(chat.messages as MessageList, message)
+      returnedChat.choices[0].message.content = message
+    }
+  }
 
   function calculateMessageCost(tokens: number): number {
     const ratePerThousand = 0.002
@@ -165,9 +286,62 @@ const ChatAi = async (props: ChatAIInterface) => {
     // console.log('Sending chat to OpenAI API:', chat)
     const returnedData = await api.chat(chat)
     // console.log('Received chat from OpenAI API:', returnedData)
-    // console.log('Returned Chat returnedChat: ', returnedData.data.choices[0])
-    returnedChat = returnedData.data
+    console.log('Returned Chat returnedChat: ', returnedData?.data.choices[0])
+    returnedChat = returnedData?.data
     returnedChatMessage = returnedChat.choices[0].message
+
+    // if returnedChatMessage.tool_calls in not empty, then call functions in the tool_calls
+    if (returnedChatMessage.tool_calls) {
+      returnedChatMessage.tool_calls.forEach((tool_call) => {
+        console.log('Tool Call:', tool_call)
+        if (tool_call.function.name === 'get_time') {
+          const now = DateTime.local()
+          const time = now.toFormat('yyyy-MM-dd HH:mm:ss')
+          console.log('Current Time:', time)
+          const currentTime = `The current time is ${time}.`
+          // addAssistantMessageToMessagesObj(
+          //   chat.messages as MessageList,
+          //   currentTime,
+          // )
+          // returnedChat.choices[0].message.content = currentTime
+          // console.log('Chat Messages:', chat.messages)
+          toolsAddReturnedChatMessage(returnedChat, currentTime)
+        }
+        // else if (tool_call.function.name === 'add_new_memory') {
+        //   memory.addNewMemory({
+        //     chatId: chatId,
+        //     promptId: chat.promptId || 'default',
+        //     memory: tool_call.function.arguments,
+        //     datetime: now.toFormat('yyyy-MM-dd HH:mm:ss'),
+        //   })
+        // } else if (tool_call.function.name === 'get_memory') {
+        //   memory.getMemory(chatId)
+        // } else if (tool_call.function.name === 'add_to_profile') {
+        //   const args = JSON.parse(tool_call.function.arguments)
+        //   memory.addNewProfile({
+        //     chatId: chatId,
+        //     name: args.name,
+        //     nickname: args.nickname,
+        //     s: args.s,
+        //     pronouns: args.pronouns,
+        //     age: args.age,
+        //     location: args.location,
+        //   })
+        // } else if (tool_call.function.name === 'get_profile') {
+        //   memory.getProfile(chatId)
+        // } else if (tool_call.function.name === 'delete_profile') {
+        //   memory.deleteProfile(chatId)
+        // }
+      })
+    } else {
+      if (returnedChat.choices[0].message.content) {
+        addAssistantMessageToMessagesObj(
+          chat.messages,
+          returnedChat.choices[0].message.content.toString(),
+        )
+      }
+    }
+
     const promptId = chat.promptId || 'default'
     const screenName = PromptsObj()[promptId].screenName || 'default'
     returnedChat.screenName = screenName
@@ -179,10 +353,12 @@ const ChatAi = async (props: ChatAIInterface) => {
     throw error
   }
 
-  addAssistantMessageToMessagesObj(
-    chat.messages,
-    returnedChat.choices[0].message.content.toString(),
-  )
+  // if (returnedChat.choices[0].message.content) {
+  //   addAssistantMessageToMessagesObj(
+  //     chat.messages,
+  //     returnedChat.choices[0].message.content.toString(),
+  //   )
+  // }
 
   // Remove the system message before saving to the database
   removeSystemMessageFromMessagesObj(chat.messages)
@@ -225,7 +401,9 @@ const ChatAi = async (props: ChatAIInterface) => {
     promptLimit: chat.promptLimit,
     model: chat.model,
   })
-  const tokenizedResponse = encode(returnedChatMessage.content.toString())
+  const tokenizedResponse = encode(
+    returnedChatMessage.content?.toString() || '',
+  )
   const responseCost = calculateMessageCost(tokenizedResponse.length)
   logger.info({
     timestamp: now.toFormat('yyyy-MM-dd HH:mm:ss'),
@@ -249,7 +427,9 @@ const ChatAi = async (props: ChatAIInterface) => {
   })
 
   // Modify the returnedChat object to include the parsed message
-  const parsedMessage = CodeBlocksParse(returnedChatMessage.content.toString())
+  const parsedMessage = CodeBlocksParse(
+    returnedChatMessage.content?.toString() || '',
+  )
   const parsedReturnedChat = {
     ...returnedChat,
     message: {

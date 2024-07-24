@@ -15,7 +15,7 @@ const Prompt = (props: PromptInterface) => {
     const promptObj = PromptsObj()
 
     let prompt = promptObj.default
-    let model = 'gpt-3.5-turbo'
+    let model = 'gpt-4o-mini'
 
     //create list of gpt versions
     const gptVersions = [
@@ -72,7 +72,6 @@ const Prompt = (props: PromptInterface) => {
           model = gptVersions[9]
           break
         default:
-          // code for other models
           model = gptVersions[9]
           break
       }

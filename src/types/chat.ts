@@ -1,6 +1,7 @@
 type Message = {
   role: string
-  content: string | Content | Content[]
+  content: string | Content | Content[] | null
+  tool_calls?: Tool_calls[]
 }
 
 type Content = {
@@ -9,6 +10,15 @@ type Content = {
   image_url?: {
     url: string
     detail: string
+  }
+}
+
+type Tool_calls = {
+  id: string
+  type: string
+  function: {
+    name: string
+    arguments: string
   }
 }
 
@@ -31,6 +41,8 @@ type Chat = {
   prompt?: string
   promptLimit: number
   model: string
+  tools?: any
+  tool_choice?: string
 }
 
-export { Chat, Content, Message, MessageList, MessageListInterface }
+export { Chat, Content, Message, MessageList, MessageListInterface, Tool_calls }

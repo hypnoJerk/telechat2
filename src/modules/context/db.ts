@@ -99,6 +99,7 @@ const DB = () => {
           db.get(
             'SELECT promptId, prompt FROM chat WHERE chatId = ?',
             [chatId],
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (err, row: any) => {
               if (err) {
                 console.log(err.message)

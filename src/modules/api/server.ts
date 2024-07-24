@@ -31,23 +31,21 @@ const API = async () => {
     if (!data) {
       throw new Error('No data provided')
     }
-    // let messages: Message[]
 
     // get model from promptsObj based on promptId
 
     const promptsObj = PromptsObj()
 
-    // promptsObj['jessica'].model
-
     const requestData = {
-      // model: 'gpt-3.5-turbo',
       model: data.model,
       messages: data.messages?.messages,
       temperature: data.temperature,
       user: data.chatId.toString(),
       max_tokens: 2000,
+      tools: data.tools,
+      tool_choice: data.tool_choice,
     }
-    // console.log('requestData: ', requestData)
+    console.log('requestData: ', requestData)
     // console.log('messages: ', data.messages?.messages)
 
     // / if any messages in data has an image, send to vision model
@@ -76,7 +74,7 @@ const API = async () => {
           // only include last message, remove all other messages
           requestData.messages = [lastMessage]
           console.log('lastContent.type: ', lastContent.type)
-          requestData.model = 'gpt-4-vision-preview'
+          requestData.model = 'gpt-4o'
           requestData.max_tokens = 500
         }
       }
@@ -93,9 +91,9 @@ const API = async () => {
           const promptId = data.promptId // Ensure promptId is defined
           if (promptId === undefined) {
             throw new Error('Prompt ID is not defined')
-          } else if (response.data.model === 'gpt-4-vision-preview') {
+          } else if (response.data.model === 'gpt-4o') {
             response.data.model = promptsObj[promptId].model
-            console.log('response.data.model: ', response.data.model)
+            // console.log('response.data.model: ', response.data.model)
           }
           return response
         })
@@ -125,7 +123,7 @@ const API = async () => {
         'Error while communicating with OpenAI API:',
         errorMessageText,
       )
-      throw error
+      // throw error
     }
   }
 
