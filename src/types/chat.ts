@@ -1,5 +1,6 @@
 type Message = {
   role: string
+  name?: string
   content: string | Content | Content[] | null
   tool_calls?: Tool_calls[]
 }

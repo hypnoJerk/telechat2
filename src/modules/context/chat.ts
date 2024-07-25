@@ -69,6 +69,18 @@ const addAssistantMessageToMessagesObj = (
   })
 }
 
+const addFunctionMessageToMessagesObj = (
+  messagesObj: MessageList,
+  assistantMessageContent: string,
+  name: string,
+): void => {
+  messagesObj.messages.push({
+    role: 'function',
+    name: name,
+    content: assistantMessageContent,
+  })
+}
+
 const prependSystemMessageToMessagesObj = (
   messagesObj: MessageList,
   systemMessageContent = '',
@@ -235,9 +247,14 @@ const ChatAi = async (props: ChatAIInterface) => {
   function toolsAddReturnedChatMessage(
     returnedChat: ReturnedChat,
     message: string,
+    name: string,
   ) {
     if (returnedChat) {
-      addAssistantMessageToMessagesObj(chat.messages as MessageList, message)
+      addFunctionMessageToMessagesObj(
+        chat.messages as MessageList,
+        message,
+        name,
+      )
       returnedChat.choices[0].message.content = message
     }
   }
@@ -290,61 +307,6 @@ const ChatAi = async (props: ChatAIInterface) => {
     returnedChat = returnedData?.data
     returnedChatMessage = returnedChat.choices[0].message
 
-    // if returnedChatMessage.tool_calls in not empty, then call functions in the tool_calls
-    if (returnedChatMessage.tool_calls) {
-      returnedChatMessage.tool_calls.forEach((tool_call) => {
-        console.log('Tool Call:', tool_call)
-        if (tool_call.function.name === 'get_time') {
-          const now = DateTime.local()
-          const time = now.toFormat('yyyy-MM-dd HH:mm:ss')
-          console.log('Current Time:', time)
-          const currentTime = `The current time is ${time}.`
-          // addAssistantMessageToMessagesObj(
-          //   chat.messages as MessageList,
-          //   currentTime,
-          // )
-          // returnedChat.choices[0].message.content = currentTime
-          // console.log('Chat Messages:', chat.messages)
-          toolsAddReturnedChatMessage(returnedChat, currentTime)
-        }
-        // else if (tool_call.function.name === 'add_new_memory') {
-        //   memory.addNewMemory({
-        //     chatId: chatId,
-        //     promptId: chat.promptId || 'default',
-        //     memory: tool_call.function.arguments,
-        //     datetime: now.toFormat('yyyy-MM-dd HH:mm:ss'),
-        //   })
-        // } else if (tool_call.function.name === 'get_memory') {
-        //   memory.getMemory(chatId)
-        // } else if (tool_call.function.name === 'add_to_profile') {
-        //   const args = JSON.parse(tool_call.function.arguments)
-        //   memory.addNewProfile({
-        //     chatId: chatId,
-        //     name: args.name,
-        //     nickname: args.nickname,
-        //     s: args.s,
-        //     pronouns: args.pronouns,
-        //     age: args.age,
-        //     location: args.location,
-        //   })
-        // } else if (tool_call.function.name === 'get_profile') {
-        //   memory.getProfile(chatId)
-        // } else if (tool_call.function.name === 'delete_profile') {
-        //   memory.deleteProfile(chatId)
-        // }
-      })
-    } else {
-      if (returnedChat.choices[0].message.content) {
-        addAssistantMessageToMessagesObj(
-          chat.messages,
-          returnedChat.choices[0].message.content.toString(),
-        )
-      }
-    }
-
-    const promptId = chat.promptId || 'default'
-    const screenName = PromptsObj()[promptId].screenName || 'default'
-    returnedChat.screenName = screenName
     // returnedChat.message.content = CodeBlocksParse(returnedChatMessage.content)
     // const parsedMessage = CodeBlocksParse(returnedChatMessage.content)
     // returnedChat.message.content = parsedMessage
@@ -352,6 +314,76 @@ const ChatAi = async (props: ChatAIInterface) => {
     console.error('Error while communicating with OpenAI API:', error)
     throw error
   }
+
+  // if returnedChatMessage.tool_calls in not empty, then call functions in the tool_calls
+  if (returnedChatMessage.tool_calls) {
+    returnedChatMessage.tool_calls.forEach((tool_call) => {
+      console.log('Tool Call:', tool_call)
+      if (tool_call.function.name === 'get_time') {
+        const now = DateTime.local()
+        const time = now.toFormat('MM-dd-yyyy hh:mm:ss')
+        console.log('Current Time:', time)
+        const currentTime = `The current time is ${time}.`
+        toolsAddReturnedChatMessage(
+          returnedChat,
+          currentTime,
+          tool_call.function.name,
+        )
+      }
+      // else if (tool_call.function.name === 'add_new_memory') {
+      //   memory.addNewMemory({
+      //     chatId: chatId,
+      //     promptId: chat.promptId || 'default',
+      //     memory: tool_call.function.arguments,
+      //     datetime: now.toFormat('yyyy-MM-dd HH:mm:ss'),
+      //   })
+      // } else if (tool_call.function.name === 'get_memory') {
+      //   memory.getMemory(chatId)
+      // } else if (tool_call.function.name === 'add_to_profile') {
+      //   const args = JSON.parse(tool_call.function.arguments)
+      //   memory.addNewProfile({
+      //     chatId: chatId,
+      //     name: args.name,
+      //     nickname: args.nickname,
+      //     s: args.s,
+      //     pronouns: args.pronouns,
+      //     age: args.age,
+      //     location: args.location,
+      //   })
+      // } else if (tool_call.function.name === 'get_profile') {
+      //   memory.getProfile(chatId)
+      // } else if (tool_call.function.name === 'delete_profile') {
+      //   memory.deleteProfile(chatId)
+      // }
+    })
+
+    try {
+      const toolReturnedData = await api.chat(chat)
+      returnedChat = toolReturnedData?.data
+      returnedChatMessage = returnedChat.choices[0].message
+
+      if (returnedChat.choices[0].message.content) {
+        addAssistantMessageToMessagesObj(
+          chat.messages,
+          returnedChat.choices[0].message.content.toString(),
+        )
+      }
+    } catch (error) {
+      console.error('Error while communicating with OpenAI API:', error)
+      throw error
+    }
+  } else {
+    if (returnedChat.choices[0].message.content) {
+      addAssistantMessageToMessagesObj(
+        chat.messages,
+        returnedChat.choices[0].message.content.toString(),
+      )
+    }
+  }
+
+  const promptId = chat.promptId || 'default'
+  const screenName = PromptsObj()[promptId].screenName || 'default'
+  returnedChat.screenName = screenName
 
   // if (returnedChat.choices[0].message.content) {
   //   addAssistantMessageToMessagesObj(
