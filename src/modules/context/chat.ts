@@ -285,6 +285,13 @@ const ChatAi = async (props: ChatAIInterface) => {
             'The profile has been deleted.',
             tool_call.function.name,
           )
+        } else if (tool_call.function.name === 'delete_memory') {
+          memory.deleteMemories(chatId, chat.promptId || '')
+          toolsAddReturnedChatMessage(
+            returnedChat,
+            'All memories have been deleted.',
+            tool_call.function.name,
+          )
         }
       }
       chat.tool_choice = 'none'

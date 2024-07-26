@@ -254,6 +254,21 @@ const Memory = () => {
     })
   }
 
+  function deleteMemories(chatId: number, promptId: string) {
+    db.serialize(() => {
+      db.run(
+        'DELETE FROM memory WHERE chatId = ? AND promptId = ?',
+        [chatId, promptId],
+        (err) => {
+          if (err) {
+            const error = err.message
+            console.log(error)
+          }
+        },
+      )
+    })
+  }
+
   return {
     addNewProfile,
     addToProfile,
@@ -261,6 +276,7 @@ const Memory = () => {
     deleteProfile,
     addNewMemory,
     getMemory,
+    deleteMemories,
   }
 } // end of const Memory
 

@@ -23,7 +23,7 @@ const tools = [
           memory: {
             type: 'string',
             description:
-              'The note or piece of information about the user to add to your memory.',
+              'The note or piece of information about the user to add to the memory.',
           },
         },
         required: ['memory'],
@@ -36,6 +36,18 @@ const tools = [
       name: 'get_memory',
       description:
         'Retrieve all notes or pieces of information about the user from memory.',
+      parameters: {
+        type: 'object',
+        properties: {},
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'delete_memory',
+      description:
+        'Delete all notes or pieces of information about the user from memory.',
       parameters: {
         type: 'object',
         properties: {},
