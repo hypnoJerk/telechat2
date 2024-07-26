@@ -248,7 +248,7 @@ const ChatAi = async (props: ChatAIInterface) => {
             tool_call.function.name,
           )
         } else if (tool_call.function.name === 'add_new_memory') {
-          memory.addNewMemory({
+          const memorySaved = await memory.addNewMemory({
             chatId: chatId,
             promptId: chat.promptId || 'default',
             memory: tool_call.function.arguments,
@@ -256,7 +256,7 @@ const ChatAi = async (props: ChatAIInterface) => {
           })
           toolsAddReturnedChatMessage(
             returnedChat,
-            'Saved new memory.',
+            memorySaved.memory,
             tool_call.function.name,
           )
         } else if (tool_call.function.name === 'get_memory') {

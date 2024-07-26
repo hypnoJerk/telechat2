@@ -217,18 +217,21 @@ const Memory = () => {
     promptId,
     memory,
     datetime,
-  }: Memory_Interface) {
-    db.serialize(() => {
-      db.run(
-        'INSERT INTO memory VALUES (?, ?, ?, ?)',
-        [chatId, promptId, memory, datetime],
-        (err) => {
-          if (err) {
-            const error = err.message
-            console.log(error)
-          }
-        },
-      )
+  }: Memory_Interface): Promise<{ memory: string }> {
+    return new Promise<{ memory: string }>((resolve, reject) => {
+      db.serialize(() => {
+        db.run(
+          'INSERT INTO memory VALUES (?, ?, ?, ?)',
+          [chatId, promptId, memory, datetime],
+          (err) => {
+            if (err) {
+              reject(err.message)
+            } else {
+              resolve({ memory })
+            }
+          },
+        )
+      })
     })
   }
 
