@@ -1,15 +1,16 @@
 import { MessageList, Chat, Message, Content } from '../../types/chat'
 import { API } from '../../modules/api/server'
 import DB from '../../modules/context/db'
-// import Memory from './db-memory'
+import Memory from './db-memory'
 import CodeBlocksParse from '../parse/codeBlocksParse'
 import PromptsObj from '../prompt/promptsObj'
 import logger from '../logger/logger'
 import { encode } from 'gpt-3-encoder'
 import { DateTime } from 'luxon'
+import tools from '../context/tools'
 
 const now = DateTime.local()
-// const memory = Memory()
+const memory = Memory()
 
 interface ChatAIInterface {
   chatId: number
@@ -135,110 +136,6 @@ const ChatAi = async (props: ChatAIInterface) => {
   prependSystemMessageToMessagesObj(messagesObj, chat.prompt)
 
   // add tools and tool_choice to the chat object
-  const tools = [
-    {
-      type: 'function',
-      function: {
-        name: 'get_time',
-        description: 'Get the current time.',
-        parameters: {
-          type: 'object',
-          properties: {},
-        },
-      },
-    },
-    {
-      type: 'function',
-      function: {
-        name: 'add_new_memory',
-        description:
-          'Add a new note or piece of information to your memory via a DB.',
-        parameters: {
-          type: 'object',
-          properties: {
-            memory: {
-              type: 'string',
-              description:
-                'The note or piece of information about the user to add to your memory.',
-            },
-          },
-          required: ['memory'],
-        },
-      },
-    },
-    {
-      type: 'function',
-      function: {
-        name: 'get_memory',
-        description:
-          'Retrieve all notes or pieces of information about the user from memory.',
-        parameters: {
-          type: 'object',
-          properties: {},
-        },
-      },
-    },
-    {
-      type: 'function',
-      function: {
-        name: 'add_to_profile',
-        description:
-          'Add or change information about the user in their profile.',
-        parameters: {
-          type: 'object',
-          properties: {
-            name: {
-              type: 'string',
-              description: 'The name of the user.',
-            },
-            nickname: {
-              type: 'string',
-              description: 'The nickname of the user.',
-            },
-            s: {
-              type: 'string',
-            },
-            pronouns: {
-              type: 'string',
-              description: 'The pronouns of the user.',
-            },
-            age: {
-              type: 'number',
-              description: 'The age of the user.',
-            },
-            location: {
-              type: 'string',
-              description: 'The location of the user.',
-            },
-          },
-        },
-      },
-    },
-    {
-      type: 'function',
-      function: {
-        name: 'get_profile',
-        description:
-          'Retrieve all information about the user from their profile.',
-        parameters: {
-          type: 'object',
-          properties: {},
-        },
-      },
-    },
-    {
-      type: 'function',
-      function: {
-        name: 'delete_profile',
-        description:
-          'Delete all information about the user from their profile.',
-        parameters: {
-          type: 'object',
-          properties: {},
-        },
-      },
-    },
-  ]
 
   chat.messages = messagesObj
   chat.tools = tools
@@ -300,85 +197,133 @@ const ChatAi = async (props: ChatAIInterface) => {
   let returnedChatMessage: Message
 
   try {
+    chat.tool_choice = 'auto'
     // console.log('Sending chat to OpenAI API:', chat)
     const returnedData = await api.chat(chat)
     // console.log('Received chat from OpenAI API:', returnedData)
-    console.log('Returned Chat returnedChat: ', returnedData?.data.choices[0])
+    // console.log('Returned Chat returnedChat: ', returnedData?.data.choices[0])
     returnedChat = returnedData?.data
     returnedChatMessage = returnedChat.choices[0].message
 
     // returnedChat.message.content = CodeBlocksParse(returnedChatMessage.content)
     // const parsedMessage = CodeBlocksParse(returnedChatMessage.content)
     // returnedChat.message.content = parsedMessage
-  } catch (error) {
-    console.error('Error while communicating with OpenAI API:', error)
-    throw error
-  }
 
-  // if returnedChatMessage.tool_calls in not empty, then call functions in the tool_calls
-  if (returnedChatMessage.tool_calls) {
-    returnedChatMessage.tool_calls.forEach((tool_call) => {
-      console.log('Tool Call:', tool_call)
-      if (tool_call.function.name === 'get_time') {
-        const now = DateTime.local()
-        const time = now.toFormat('MM-dd-yyyy hh:mm:ss')
-        console.log('Current Time:', time)
-        const currentTime = `The current time is ${time}.`
-        toolsAddReturnedChatMessage(
-          returnedChat,
-          currentTime,
-          tool_call.function.name,
-        )
+    // if returnedChatMessage.tool_calls in not empty, then call functions in the tool_calls
+    if (returnedChatMessage.tool_calls) {
+      for (const tool_call of returnedChatMessage.tool_calls) {
+        if (tool_call.function.name === 'get_time') {
+          const now = DateTime.local()
+          const time = now.toFormat('MM-dd-yyyy hh:mm:ss a')
+          const currentTime = `The current time is ${time}.`
+          toolsAddReturnedChatMessage(
+            returnedChat,
+            currentTime,
+            tool_call.function.name,
+          )
+        } else if (tool_call.function.name === 'get_profile') {
+          const returnedProfile = await memory.getProfile(chatId)
+          if (returnedProfile) {
+            const profile = JSON.stringify(returnedProfile)
+            toolsAddReturnedChatMessage(
+              returnedChat,
+              profile,
+              tool_call.function.name,
+            )
+          }
+        } else if (tool_call.function.name === 'add_to_profile') {
+          const args = JSON.parse(tool_call.function.arguments)
+          memory.addToProfile({
+            chatId: chatId,
+            name: args.name,
+            nickname: args.nickname,
+            s: args.s,
+            pronouns: args.pronouns,
+            age: args.age,
+            location: args.location,
+          })
+          toolsAddReturnedChatMessage(
+            returnedChat,
+            'Added to profile.',
+            tool_call.function.name,
+          )
+        } else if (tool_call.function.name === 'add_new_memory') {
+          memory.addNewMemory({
+            chatId: chatId,
+            promptId: chat.promptId || 'default',
+            memory: tool_call.function.arguments,
+            datetime: now.toFormat('yyyy-MM-dd HH:mm:ss'),
+          })
+          toolsAddReturnedChatMessage(
+            returnedChat,
+            'Saved new memory.',
+            tool_call.function.name,
+          )
+        } else if (tool_call.function.name === 'get_memory') {
+          const returnedMemory = await memory.getMemory(
+            chatId,
+            chat.promptId || 'default',
+          )
+          if (returnedMemory) {
+            const data = returnedMemory.map(
+              (item: { memory: string; datetime: string }) => ({
+                memory: item.memory,
+                datetime: item.datetime,
+              }),
+            )
+            const memory = JSON.stringify(data)
+            toolsAddReturnedChatMessage(
+              returnedChat,
+              memory,
+              tool_call.function.name,
+            )
+          }
+        } else if (tool_call.function.name === 'delete_profile') {
+          memory.deleteProfile(chatId)
+          toolsAddReturnedChatMessage(
+            returnedChat,
+            'The profile has been deleted.',
+            tool_call.function.name,
+          )
+        }
       }
-      // else if (tool_call.function.name === 'add_new_memory') {
-      //   memory.addNewMemory({
-      //     chatId: chatId,
-      //     promptId: chat.promptId || 'default',
-      //     memory: tool_call.function.arguments,
-      //     datetime: now.toFormat('yyyy-MM-dd HH:mm:ss'),
-      //   })
-      // } else if (tool_call.function.name === 'get_memory') {
-      //   memory.getMemory(chatId)
-      // } else if (tool_call.function.name === 'add_to_profile') {
-      //   const args = JSON.parse(tool_call.function.arguments)
-      //   memory.addNewProfile({
-      //     chatId: chatId,
-      //     name: args.name,
-      //     nickname: args.nickname,
-      //     s: args.s,
-      //     pronouns: args.pronouns,
-      //     age: args.age,
-      //     location: args.location,
-      //   })
-      // } else if (tool_call.function.name === 'get_profile') {
-      //   memory.getProfile(chatId)
-      // } else if (tool_call.function.name === 'delete_profile') {
-      //   memory.deleteProfile(chatId)
-      // }
-    })
+      chat.tool_choice = 'none'
+      try {
+        console.log(chat.messages)
+        const toolReturnedData = await api.chat(chat)
+        console.log(
+          'Tool Return: Response from OpenAI API:',
+          toolReturnedData?.data.choices[0],
+        )
+        console.log(
+          'Tool Return: tool_calls:',
+          toolReturnedData?.data.choices[0].message.tool_calls,
+        )
+        returnedChat = toolReturnedData?.data
+        returnedChatMessage = returnedChat.choices[0].message
 
-    try {
-      const toolReturnedData = await api.chat(chat)
-      returnedChat = toolReturnedData?.data
-      returnedChatMessage = returnedChat.choices[0].message
-
+        if (returnedChat.choices[0].message.content) {
+          addAssistantMessageToMessagesObj(
+            chat.messages,
+            returnedChat.choices[0].message.content.toString(),
+          )
+        }
+      } catch (error) {
+        console.error('Error while communicating with OpenAI API:', error)
+        throw error
+      }
+    } else {
+      chat.tool_choice = 'auto'
       if (returnedChat.choices[0].message.content) {
         addAssistantMessageToMessagesObj(
           chat.messages,
           returnedChat.choices[0].message.content.toString(),
         )
       }
-    } catch (error) {
-      console.error('Error while communicating with OpenAI API:', error)
-      throw error
     }
-  } else {
-    if (returnedChat.choices[0].message.content) {
-      addAssistantMessageToMessagesObj(
-        chat.messages,
-        returnedChat.choices[0].message.content.toString(),
-      )
-    }
+  } catch (error) {
+    console.error('Error while communicating with OpenAI API:', error)
+    throw error
   }
 
   const promptId = chat.promptId || 'default'
