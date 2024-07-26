@@ -46,7 +46,7 @@ const Memory = () => {
       'CREATE TABLE IF NOT EXISTS profile (chatId INTEGER PRIMARY KEY, name TEXT, nickname TEXT, s TEXT, pronouns TEXT, age INTEGER, location TEXT)',
     )
     db.run(
-      'CREATE TABLE IF NOT EXISTS memory (chatId INTEGER, promptId TEXT, memory TEXT, datetime TEXT )',
+      'CREATE TABLE IF NOT EXISTS memory (id INTEGER PRIMARY KEY AUTOINCREMENT, chatId INTEGER, promptId TEXT, memory TEXT, datetime TEXT )',
     )
   })
 
@@ -221,7 +221,7 @@ const Memory = () => {
     return new Promise<{ memory: string }>((resolve, reject) => {
       db.serialize(() => {
         db.run(
-          'INSERT INTO memory VALUES (?, ?, ?, ?)',
+          'INSERT INTO memory (chatId, promptId, memory, datetime) VALUES (?, ?, ?, ?)',
           [chatId, promptId, memory, datetime],
           (err) => {
             if (err) {
@@ -242,7 +242,7 @@ const Memory = () => {
     return new Promise((resolve, reject) => {
       db.serialize(() => {
         db.all(
-          'SELECT * FROM memory WHERE chatId = ? AND promptId = ?',
+          'SELECT id, * FROM memory WHERE chatId = ? AND promptId = ?',
           [chatId, promptId],
           (err, rows: Memory_return_Interface[]) => {
             if (err) {
@@ -272,6 +272,24 @@ const Memory = () => {
     })
   }
 
+  function deleteSelectedMemories(ids: number[]) {
+    if (ids.length === 0) {
+      return
+    }
+
+    const placeholders = ids.map(() => '?').join(',')
+    const query = `DELETE FROM memory WHERE id IN (${placeholders})`
+
+    db.serialize(() => {
+      db.run(query, ids, (err) => {
+        if (err) {
+          const error = err.message
+          console.log(error)
+        }
+      })
+    })
+  }
+
   return {
     addNewProfile,
     addToProfile,
@@ -280,6 +298,7 @@ const Memory = () => {
     addNewMemory,
     getMemory,
     deleteMemories,
+    deleteSelectedMemories,
   }
 } // end of const Memory
 
