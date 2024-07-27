@@ -57,6 +57,26 @@ const tools = [
   {
     type: 'function',
     function: {
+      name: 'delete_selected_memories',
+      description: 'Delete multiple memories by list of row ids.',
+      parameters: {
+        type: 'object',
+        properties: {
+          ids: {
+            type: 'array',
+            description: 'The list of row ids to delete.',
+            items: {
+              type: 'number',
+            },
+          },
+        },
+        required: ['ids'],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
       name: 'add_to_profile',
       description: 'Add or change information about the user in their profile.',
       parameters: {

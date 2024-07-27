@@ -9,6 +9,7 @@ interface Memory_Interface {
 }
 
 interface Memory_return_Interface {
+  id: number
   chatId: number
   promptId: string
   memory: string
@@ -217,17 +218,17 @@ const Memory = () => {
     promptId,
     memory,
     datetime,
-  }: Memory_Interface): Promise<{ memory: string }> {
-    return new Promise<{ memory: string }>((resolve, reject) => {
+  }: Memory_Interface): Promise<{ id: number; memory: string }> {
+    return new Promise<{ id: number; memory: string }>((resolve, reject) => {
       db.serialize(() => {
         db.run(
           'INSERT INTO memory (chatId, promptId, memory, datetime) VALUES (?, ?, ?, ?)',
           [chatId, promptId, memory, datetime],
-          (err) => {
+          function (err) {
             if (err) {
               reject(err.message)
             } else {
-              resolve({ memory })
+              resolve({ id: this.lastID, memory })
             }
           },
         )
@@ -272,7 +273,7 @@ const Memory = () => {
     })
   }
 
-  function deleteSelectedMemories(ids: number[]) {
+  function deleteSelectedMemories({ ids }: { ids: number[] }) {
     if (ids.length === 0) {
       return
     }

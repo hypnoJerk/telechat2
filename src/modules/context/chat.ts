@@ -256,7 +256,7 @@ const ChatAi = async (props: ChatAIInterface) => {
           })
           toolsAddReturnedChatMessage(
             returnedChat,
-            memorySaved.memory,
+            '{"id": ' + memorySaved.id + '}' + memorySaved.memory,
             tool_call.function.name,
           )
         } else if (tool_call.function.name === 'get_memory') {
@@ -266,7 +266,8 @@ const ChatAi = async (props: ChatAIInterface) => {
           )
           if (returnedMemory) {
             const data = returnedMemory.map(
-              (item: { memory: string; datetime: string }) => ({
+              (item: { id: number; memory: string; datetime: string }) => ({
+                id: item.id,
                 memory: item.memory,
                 datetime: item.datetime,
               }),
@@ -292,18 +293,27 @@ const ChatAi = async (props: ChatAIInterface) => {
             'All memories have been deleted.',
             tool_call.function.name,
           )
+        } else if (tool_call.function.name === 'delete_selected_memories') {
+          const args = JSON.parse(tool_call.function.arguments)
+          console.log('Delete_Selected_Memories: ', args.toString())
+          memory.deleteSelectedMemories(args)
+          toolsAddReturnedChatMessage(
+            returnedChat,
+            'Deleted rows ' + args,
+            tool_call.function.name,
+          )
         }
       }
-      chat.tool_choice = 'none'
+      chat.tool_choice = 'auto'
       try {
         console.log(chat.messages)
         const toolReturnedData = await api.chat(chat)
+        // console.log(
+        //   'Tool Return: Response from OpenAI API:',
+        //   toolReturnedData?.data.choices[0],
+        // )
         console.log(
-          'Tool Return: Response from OpenAI API:',
-          toolReturnedData?.data.choices[0],
-        )
-        console.log(
-          'Tool Return: tool_calls:',
+          'Tool Return Data: tool_calls:',
           toolReturnedData?.data.choices[0].message.tool_calls,
         )
         returnedChat = toolReturnedData?.data
