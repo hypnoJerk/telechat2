@@ -23,6 +23,7 @@ const OnMessage = (bot: Telegraf) => {
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   bot.on(message('text'), CheckAccessMiddleware, async (ctx: any) => {
+    await ctx.telegram.sendChatAction(ctx.chat.id, 'typing')
     if (ctx.message.text.length > 4096) {
       ctx.reply(
         'Your message exceeds the character limit of 4,096 characters. I may not be able to respond properly. Please shorten your message and try again, or use chat.openai.com directly.',
@@ -36,6 +37,7 @@ const OnMessage = (bot: Telegraf) => {
         content: ctx.message.text,
       },
     }
+
     const chatReply: Chat = await ChatAi(chatRequest)
     ctx.reply(`<b>${chatReply.screenName}</b>:  ` + chatReply.message.content, {
       parse_mode: 'HTML',
