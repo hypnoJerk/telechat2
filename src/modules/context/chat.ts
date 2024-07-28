@@ -138,8 +138,10 @@ const ChatAi = async (props: ChatAIInterface) => {
   // add tools and tool_choice to the chat object
 
   chat.messages = messagesObj
-  chat.tools = tools
-  chat.tool_choice = 'auto'
+  if (chat.chatId === parseInt(process.env.OWNER_ID ?? '')) {
+    chat.tools = tools
+    chat.tool_choice = 'auto'
+  }
 
   function toolsAddReturnedChatMessage(
     returnedChat: ReturnedChat,
@@ -197,17 +199,21 @@ const ChatAi = async (props: ChatAIInterface) => {
   let hasToolCalls = true
 
   try {
-    chat.tool_choice = 'auto'
+    // chat.tool_choice = 'auto'
+    let counter = 0
 
     do {
       const returnedData = await api.chat(chat)
+      console.log('sent Request to API')
       returnedChat = returnedData?.data
       returnedChatMessage = returnedChat.choices[0].message
 
       // Process tool calls
       if (returnedChatMessage.tool_calls) {
+        console.log('Tool Call Detected')
         for (const tool_call of returnedChatMessage.tool_calls) {
           if (tool_call.function.name === 'get_time') {
+            console.log('Function: ', tool_call.function.name)
             const now = DateTime.local()
             const time = now.toFormat('MM-dd-yyyy hh:mm:ss a')
             const currentTime = `The current time is ${time}.`
@@ -217,6 +223,7 @@ const ChatAi = async (props: ChatAIInterface) => {
               tool_call.function.name,
             )
           } else if (tool_call.function.name === 'get_profile') {
+            console.log('Function: ', tool_call.function.name)
             const returnedProfile = await memory.getProfile(chatId)
             if (returnedProfile) {
               const profile = JSON.stringify(returnedProfile)
@@ -227,6 +234,7 @@ const ChatAi = async (props: ChatAIInterface) => {
               )
             }
           } else if (tool_call.function.name === 'add_to_profile') {
+            console.log('Function: ', tool_call.function.name)
             const args = JSON.parse(tool_call.function.arguments)
             memory.addToProfile({
               chatId: chatId,
@@ -243,6 +251,7 @@ const ChatAi = async (props: ChatAIInterface) => {
               tool_call.function.name,
             )
           } else if (tool_call.function.name === 'add_new_memory') {
+            console.log('Function: ', tool_call.function.name)
             const memorySaved = await memory.addNewMemory({
               chatId: chatId,
               promptId: chat.promptId || 'default',
@@ -255,6 +264,7 @@ const ChatAi = async (props: ChatAIInterface) => {
               tool_call.function.name,
             )
           } else if (tool_call.function.name === 'get_memory') {
+            console.log('Function: ', tool_call.function.name)
             const returnedMemory = await memory.getMemory(
               chatId,
               chat.promptId || 'default',
@@ -275,6 +285,7 @@ const ChatAi = async (props: ChatAIInterface) => {
               )
             }
           } else if (tool_call.function.name === 'delete_profile') {
+            console.log('Function: ', tool_call.function.name)
             memory.deleteProfile(chatId)
             toolsAddReturnedChatMessage(
               returnedChat,
@@ -282,6 +293,7 @@ const ChatAi = async (props: ChatAIInterface) => {
               tool_call.function.name,
             )
           } else if (tool_call.function.name === 'delete_memory') {
+            console.log('Function: ', tool_call.function.name)
             memory.deleteMemories(chatId, chat.promptId || '')
             toolsAddReturnedChatMessage(
               returnedChat,
@@ -289,6 +301,7 @@ const ChatAi = async (props: ChatAIInterface) => {
               tool_call.function.name,
             )
           } else if (tool_call.function.name === 'delete_selected_memories') {
+            console.log('Function: ', tool_call.function.name)
             const args = JSON.parse(tool_call.function.arguments)
             console.log('Delete_Selected_Memories: ', args.toString())
             memory.deleteSelectedMemories(args)
@@ -299,12 +312,13 @@ const ChatAi = async (props: ChatAIInterface) => {
             )
           }
         }
-        chat.tool_choice = 'auto'
+        // chat.tool_choice = 'auto'
       } else {
         hasToolCalls = false
       }
 
-      if (hasToolCalls) {
+      if (!hasToolCalls) {
+        console.log('No Tool Calls Detected')
         const toolReturnedData = await api.chat(chat)
         returnedChat = toolReturnedData?.data
         returnedChatMessage = returnedChat.choices[0].message
@@ -317,6 +331,10 @@ const ChatAi = async (props: ChatAIInterface) => {
         }
 
         hasToolCalls = returnedChatMessage.tool_calls ? true : false
+      }
+      counter++
+      if (counter >= 5) {
+        break
       }
     } while (hasToolCalls)
   } catch (error) {

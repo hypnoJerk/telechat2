@@ -45,7 +45,10 @@ const API = async () => {
       tools: data.tools,
       tool_choice: data.tool_choice,
     }
-    console.log('requestData: ', requestData)
+    if (!data.model || data.model.length > 3) {
+      requestData.model = 'gpt-4o-mini'
+    }
+    // console.log('requestData: ', requestData)
     // console.log('messages: ', data.messages?.messages)
 
     // / if any messages in data has an image, send to vision model
@@ -58,14 +61,14 @@ const API = async () => {
         chatId: data.chatId.toString(),
         lastMessage: lastMessage,
       })
-      console.log('lastMessage: ', lastMessage)
+      // console.log('lastMessage: ', lastMessage)
       if (Array.isArray(lastMessage?.content)) {
         const lastContent = lastMessage.content[lastMessage.content.length - 1]
         logger.info({
           chatId: data.chatId.toString(),
           lastContent: lastContent,
         })
-        console.log('lastContent: ', lastContent)
+        // console.log('lastContent: ', lastContent)
         if (lastContent.type === 'image_url') {
           logger.info({
             chatId: data.chatId.toString(),

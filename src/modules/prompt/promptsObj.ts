@@ -12,8 +12,7 @@ const PromptsObj = (): Prompts => {
       promptLimit: 6,
       description:
         'ChatGPT is a general purpose chatbot. It can be used for a variety of purposes, including customer service, technical support, and more.',
-      content:
-        "You are a helpful assistant. Use get_profile() to get the user's name and ask how they are doing. If you do not know their name, politely ask them! Use their name in your responses.",
+      content: 'You are a helpful assistant.',
     },
     custom: {
       name: 'Custom',

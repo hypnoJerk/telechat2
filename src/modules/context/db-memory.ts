@@ -181,7 +181,7 @@ const Memory = () => {
 
   function getProfile(
     chatId: number,
-  ): Promise<Memory_profile_return_Interface | null> {
+  ): Promise<Memory_profile_return_Interface | string> {
     return new Promise((resolve, reject) => {
       db.serialize(() => {
         db.get(
@@ -191,6 +191,10 @@ const Memory = () => {
             if (err) {
               console.log(err.message)
               reject(err)
+            } else if (!row) {
+              resolve(
+                'No Profile found. Ask user for their name and use add_to_profile()',
+              )
             } else {
               resolve(row)
             }
